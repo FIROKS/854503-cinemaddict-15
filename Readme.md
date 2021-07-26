@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Максим Ап](https://up.htmlacademy.ru/ecmascript/15/user/854503).
-* Наставник: `Неизвестно`.
+* Наставник: [Ксения Толстых](https://htmlacademy.ru/profile/id618277).
 
 ---
 
