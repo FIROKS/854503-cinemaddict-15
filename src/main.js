@@ -12,36 +12,38 @@ const renderTemplate = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
-const headerElement = document.querySelector(`.header`);
-const mainElement = document.querySelector(`.main`);
-const footerElement = document.querySelector(`.footer`);
+const headerElement = document.querySelector('.header');
+const mainElement = document.querySelector('.main');
+const footerElement = document.querySelector('.footer');
 
-renderTemplate(headerElement, createUserTemplate(), `beforeend`);
-renderTemplate(footerElement, createFooterStatsTemplate(), `beforeend`);
+renderTemplate(headerElement, createUserTemplate(), 'beforeend');
+renderTemplate(footerElement, createFooterStatsTemplate(), 'beforeend');
 
-renderTemplate(mainElement, createFilmsTemplate(), `afterbegin`);
-renderTemplate(mainElement, createSortTemplate(), `afterbegin`);
-renderTemplate(mainElement, createMenuTemplate(), `afterbegin`);
+renderTemplate(mainElement, createFilmsTemplate(), 'afterbegin');
+renderTemplate(mainElement, createSortTemplate(), 'afterbegin');
+renderTemplate(mainElement, createMenuTemplate(), 'afterbegin');
 
-const filmListContainerElement = mainElement.querySelector(`.films-list__container`);
-const filmListElement = mainElement.querySelector(`.films-list`);
-const filmsElement = mainElement.querySelector(`.films`);
+const filmListContainerElement = mainElement.querySelector('.films-list__container');
+const filmListElement = mainElement.querySelector('.films-list');
+const filmsElement = mainElement.querySelector('.films');
 
 for (let i = 0; i < 5; i++) {
-  renderTemplate(filmListContainerElement, createCardTemplate(), `beforeend`);
-};
+  renderTemplate(filmListContainerElement, createCardTemplate(), 'beforeend');
+}
 
-renderTemplate(filmListElement, createShowMoreTemplate(), `beforeend`);
+renderTemplate(filmListElement, createShowMoreTemplate(), 'beforeend');
 
-renderTemplate(filmsElement, createExtraTemplate(`Top rated`), `beforeend`);
-renderTemplate(filmsElement, createExtraTemplate(`Most commented`), `beforeend`);
+renderTemplate(filmsElement, createExtraTemplate('Top rated'), 'beforeend');
+renderTemplate(filmsElement, createExtraTemplate('Most commented'), 'beforeend');
 
-const extraElements = mainElement.querySelectorAll(`.films-list.films-list--extra`);
+const extraElements = mainElement.querySelectorAll('.films-list.films-list--extra');
 
-for (let elem of extraElements) {
-  const listElement = elem.querySelector(`.films-list__container`);
+for (const elem of extraElements) {
+  const listElement = elem.querySelector('.films-list__container');
 
   for (let i = 0; i < 2; i++) {
-    renderTemplate(listElement, createCardTemplate(), `beforeend`);
+    renderTemplate(listElement, createCardTemplate(), 'beforeend');
   }
 }
+
+renderTemplate(footerElement, createDetailsTemplate(), 'afterend');
