@@ -1,5 +1,11 @@
 import { getYear } from '../utils/utils';
 
+const buttonType = [
+  ['add-to-watchlist', 'Add to watchlist'],
+  ['mark-as-watched', 'Mark as watched'],
+  ['favorite', 'Mark as favorite'],
+];
+
 const formatDescription = (text) => {
   let formatedText = text;
   if (formatedText.length > 140) {
@@ -9,11 +15,23 @@ const formatDescription = (text) => {
   return formatedText;
 };
 
+const createTypesTemplate = (types) => {
+  const createTypeTemplate = ([buttonClass, buttonText]) => (`
+  <button class="film-card__controls-item film-card__controls-item--${buttonClass}" type="button">${buttonText}</button>
+  `);
+
+  return (`
+  <div class="film-card__controls">
+    ${types.map((type) => createTypeTemplate(type)).join('')}
+  </div>
+  `);
+};
+
 export const createCardTemplate = (filmInfo) => {
   const {title, rating, date, duration, genres, poster, description, commentsCount} = filmInfo;
 
-  return (
-    `<article class="film-card">
+  return (`
+    <article class="film-card">
       <h3 class="film-card__title">${title}</h3>
       <p class="film-card__rating">${rating}</p>
       <p class="film-card__info">
@@ -24,11 +42,7 @@ export const createCardTemplate = (filmInfo) => {
       <img src="./images/posters/${poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${formatDescription(description)}</p>
       <a class="film-card__comments">${commentsCount} ${commentsCount > 1 ? 'comments' : 'comment'}</a>
-      <div class="film-card__controls">
-        <button class="film-card__controls-item film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
-        <button class="film-card__controls-item film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
-        <button class="film-card__controls-item film-card__controls-item--favorite" type="button">Mark as favorite</button>
-      </div>
-    </article>`
-  );
+      ${createTypesTemplate(buttonType)}
+    </article>
+  `);
 };

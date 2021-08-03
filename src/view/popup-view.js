@@ -2,18 +2,75 @@ import { createCommentTemplate } from './comment-view';
 import { EMOTIONS } from '../const';
 import { getFullDate } from '../utils/utils';
 
-const createEmojiTemplate = (emojiType) => (
-  `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emojiType}" value="${emojiType}">
+const buttonType = [
+  ['watchlist', 'Add to watchlist'],
+  ['watched', 'Already watched'],
+  ['favorite', 'Add to favorites'],
+];
+
+const createEmojiTemplate = (emojiType) => (`
+  <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emojiType}" value="${emojiType}">
   <label class="film-details__emoji-label" for="emoji-${emojiType}">
     <img src="./images/emoji/${emojiType}.png" width="30" height="30" alt="emoji">
-  </label>`
-);
+  </label>
+`);
+
+const createDetailsRowTemplate = (detail) => {
+  const [detailName, detailContent] = detail;
+  let detailText;
+
+  if (detailContent instanceof Date) {
+    detailText = getFullDate(detailContent);
+  } else {
+    detailText = typeof detailContent === 'string' ? detailContent : detailContent.join(', ');
+  }
+
+  return (`
+    <tr class="film-details__row">
+      <td class="film-details__term">${detailName}</td>
+      <td class="film-details__cell">${detailText}</td>
+    </tr>
+  `);
+};
+
+const createGenresTemplate = (genres) => {
+  const createGenreTemplate = (genre) => (`
+  <span class="film-details__genre">${genre}</span>
+  `);
+
+  return (`
+    <td class="film-details__term">Genres</td>
+    <td class="film-details__cell">
+      ${genres.map((genre) => createGenreTemplate(genre)).join('')}
+    </td>
+  `);
+};
+
+const createTypesTemplate = (types) => {
+  const createTypeTemplate = ([typeName, typeText]) => (`
+  <button type="button" class="film-details__control-button film-details__control-button--${typeName}" id="${typeName}" name="${typeName}">${typeText}</button>
+  `);
+
+  return (`
+    <section class="film-details__controls">
+      ${types.map((type) => createTypeTemplate(type)).join('')}
+    </section>
+  `);
+};
 
 export const createPopupTemplate = (filmInfo) => {
   const {title, originalTitle, genres, director, writers, actors, country, poster, description, comments, rating, ageRating, date, duration, commentsCount} = filmInfo;
+  const detailsItems = [
+    ['Director', director],
+    ['Writers', writers],
+    ['Actors', actors],
+    ['Release Date', date],
+    ['Runtime', duration],
+    ['Country', country],
+  ];
 
-  return (
-    `<section class="film-details">
+  return (`
+    <section class="film-details">
       <form class="film-details__inner" action="" method="get">
         <div class="film-details__top-container">
           <div class="film-details__close">
@@ -39,36 +96,9 @@ export const createPopupTemplate = (filmInfo) => {
               </div>
 
               <table class="film-details__table">
+                ${detailsItems.map((detail) => createDetailsRowTemplate(detail)).join('')}
                 <tr class="film-details__row">
-                  <td class="film-details__term">Director</td>
-                  <td class="film-details__cell">${director}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Writers</td>
-                  <td class="film-details__cell">${writers}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Actors</td>
-                  <td class="film-details__cell">${actors}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${getFullDate(date)}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${duration}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Country</td>
-                  <td class="film-details__cell">${country}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Genres</td>
-                  <td class="film-details__cell">
-                    <span class="film-details__genre">Drama</span>
-                    <span class="film-details__genre">Film-Noir</span>
-                    <span class="film-details__genre">Mystery</span></td>
+                  ${createGenresTemplate(genres)}
                 </tr>
               </table>
 
@@ -77,12 +107,7 @@ export const createPopupTemplate = (filmInfo) => {
               </p>
             </div>
           </div>
-
-          <section class="film-details__controls">
-            <button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-            <button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-            <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
-          </section>
+          ${createTypesTemplate(buttonType)}
         </div>
 
         <div class="film-details__bottom-container">
@@ -107,6 +132,6 @@ export const createPopupTemplate = (filmInfo) => {
           </section>
         </div>
       </form>
-    </section>`
-  );
+    </section>
+  `);
 };
