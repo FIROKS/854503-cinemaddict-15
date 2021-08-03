@@ -16,3 +16,5 @@ export const getRandomNumber = (a = 1, b = 0) => {
 export const getYear = (date) => dayjs(date).format('YYYY');
 
 export const getFullDate = (date) => dayjs(date).format('DD MMMM YYYY');
+
+export const capitalizeFirstLetter = (string) => `${string.charAt(0).toUpperCase()}${string.slice(1)}`;

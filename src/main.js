@@ -8,11 +8,14 @@ import {createFilmsTemplate} from './view/films-view';
 import {createExtraTemplate} from './view/extra-view';
 import {createFooterStatsTemplate} from './view/footer-stats-view';
 import { createFilmMock } from './mock/film-mock';
+import { generateFilter } from './mock/filters-mock';import { createFiltersTemplate } from './view/filters-view';
 
 const FILM_PER_STEP = 5;
 const FILMS_AMOUNT = 22;
 
 const filmMocks = new Array(FILMS_AMOUNT).fill().map(() => createFilmMock());
+
+const filterMocks = generateFilter(filmMocks);
 
 const renderTemplate = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -32,6 +35,9 @@ renderTemplate(mainElement, createMenuTemplate(), 'afterbegin');
 const filmListContainerElement = mainElement.querySelector('.films-list__container');
 const filmListElement = mainElement.querySelector('.films-list');
 const filmsElement = mainElement.querySelector('.films');
+const navElement = mainElement.querySelector('.main-navigation');
+
+renderTemplate(navElement, createFiltersTemplate(filterMocks), 'afterbegin');
 
 for (let i = 0; i < FILM_PER_STEP; i++) {
   renderTemplate(filmListContainerElement, createCardTemplate(filmMocks[i]), 'beforeend');

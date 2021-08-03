@@ -142,5 +142,8 @@ export const createFilmMock = () => {
     date: generateDate(),
     duration: geterateDuration(),
     commentsCount,
+    inWatchlist: Boolean(getRandomInteger(0, 1)),
+    inHistory: Boolean(getRandomInteger(0, 1)),
+    inFavorites: Boolean(getRandomInteger(0, 1)),
   };
 };
