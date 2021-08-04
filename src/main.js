@@ -10,8 +10,8 @@ import {createFooterStatsTemplate} from './view/footer-stats-view';
 import { createFilmMock } from './mock/film-mock';
 import { generateFilter } from './mock/filters-mock';import { createFiltersTemplate } from './view/filters-view';
 
-const FILM_PER_STEP = 5;
-const FILMS_AMOUNT = 22;
+const CARD_PER_STEP = 5;
+const FILMS_AMOUNT = 17;
 
 const filmMocks = new Array(FILMS_AMOUNT).fill().map(() => createFilmMock());
 
@@ -39,11 +39,29 @@ const navElement = mainElement.querySelector('.main-navigation');
 
 renderTemplate(navElement, createFiltersTemplate(filterMocks), 'afterbegin');
 
-for (let i = 0; i < FILM_PER_STEP; i++) {
+for (let i = 0; i < Math.min(filmMocks.length, CARD_PER_STEP); i++) {
   renderTemplate(filmListContainerElement, createCardTemplate(filmMocks[i]), 'beforeend');
 }
 
-renderTemplate(filmListElement, createShowMoreTemplate(), 'beforeend');
+if (filmMocks.length > CARD_PER_STEP) {
+  let renderedCards = CARD_PER_STEP;
+
+  renderTemplate(filmListElement, createShowMoreTemplate(), 'beforeend');
+
+  const showMoreButtonElement = filmListElement.querySelector('.films-list__show-more');
+
+  showMoreButtonElement.addEventListener('click', () => {
+    filmMocks
+      .slice(renderedCards, renderedCards + CARD_PER_STEP)
+      .map((film) => {renderTemplate(filmListContainerElement, createCardTemplate(film), 'beforeend');});
+
+    renderedCards += CARD_PER_STEP;
+
+    if (renderedCards >= filmMocks.length) {
+      showMoreButtonElement.remove();
+    }
+  });
+}
 
 renderTemplate(filmsElement, createExtraTemplate('Top rated'), 'beforeend');
 renderTemplate(filmsElement, createExtraTemplate('Most commented'), 'beforeend');
