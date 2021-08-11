@@ -1,6 +1,7 @@
-import { createCommentTemplate } from './comment-view';
+import CommentView from './comment-view';
 import { EMOTIONS } from '../const';
 import { getFullDate } from '../utils/utils';
+import AbstractView from './abstract-view';
 
 const buttonType = [
   ['watchlist', 'Add to watchlist'],
@@ -58,80 +59,88 @@ const createTypesTemplate = (types) => {
   `);
 };
 
-export const createPopupTemplate = (filmInfo) => {
-  const {title, originalTitle, genres, director, writers, actors, country, poster, description, comments, rating, ageRating, date, duration, commentsCount} = filmInfo;
-  const detailsItems = [
-    ['Director', director],
-    ['Writers', writers],
-    ['Actors', actors],
-    ['Release Date', date],
-    ['Runtime', duration],
-    ['Country', country],
-  ];
+export default class PopupView extends AbstractView {
+  constructor (filmInfo) {
+    super();
+    this._filmInfo = filmInfo;
+  }
 
-  return (`
-    <section class="film-details">
-      <form class="film-details__inner" action="" method="get">
-        <div class="film-details__top-container">
-          <div class="film-details__close">
-            <button class="film-details__close-btn" type="button">close</button>
-          </div>
-          <div class="film-details__info-wrap">
-            <div class="film-details__poster">
-              <img class="film-details__poster-img" src="./images/posters/${poster}" alt="">
+  getTemplate() {
+    const {title, originalTitle, genres, director, writers, actors, country, poster, description, comments, rating, ageRating, date, duration, commentsCount} = this._filmInfo;
 
-              <p class="film-details__age">${ageRating}</p>
+    const detailsItems = [
+      ['Director', director],
+      ['Writers', writers],
+      ['Actors', actors],
+      ['Release Date', date],
+      ['Runtime', duration],
+      ['Country', country],
+    ];
+
+    return (
+      `<section class="film-details">
+        <form class="film-details__inner" action="" method="get">
+          <div class="film-details__top-container">
+            <div class="film-details__close">
+              <button class="film-details__close-btn" type="button">close</button>
             </div>
+            <div class="film-details__info-wrap">
+              <div class="film-details__poster">
+                <img class="film-details__poster-img" src="./images/posters/${poster}" alt="">
 
-            <div class="film-details__info">
-              <div class="film-details__info-head">
-                <div class="film-details__title-wrap">
-                  <h3 class="film-details__title">${title}</h3>
-                  <p class="film-details__title-original">Original: ${originalTitle}</p>
-                </div>
-
-                <div class="film-details__rating">
-                  <p class="film-details__total-rating">${rating}</p>
-                </div>
+                <p class="film-details__age">${ageRating}</p>
               </div>
 
-              <table class="film-details__table">
-                ${detailsItems.map((detail) => createDetailsRowTemplate(detail)).join('')}
-                <tr class="film-details__row">
-                  ${createGenresTemplate(genres)}
-                </tr>
-              </table>
+              <div class="film-details__info">
+                <div class="film-details__info-head">
+                  <div class="film-details__title-wrap">
+                    <h3 class="film-details__title">${title}</h3>
+                    <p class="film-details__title-original">Original: ${originalTitle}</p>
+                  </div>
 
-              <p class="film-details__film-description">
-                ${description}
-              </p>
-            </div>
-          </div>
-          ${createTypesTemplate(buttonType)}
-        </div>
+                  <div class="film-details__rating">
+                    <p class="film-details__total-rating">${rating}</p>
+                  </div>
+                </div>
 
-        <div class="film-details__bottom-container">
-          <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
+                <table class="film-details__table">
+                  ${detailsItems.map((detail) => createDetailsRowTemplate(detail)).join('')}
+                  <tr class="film-details__row">
+                    ${createGenresTemplate(genres)}
+                  </tr>
+                </table>
 
-            <ul class="film-details__comments-list">
-              ${comments.map((comment) => createCommentTemplate(comment)).join('')}
-            </ul>
-
-            <div class="film-details__new-comment">
-              <div class="film-details__add-emoji-label"></div>
-
-              <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-              </label>
-
-              <div class="film-details__emoji-list">
-                ${EMOTIONS.map((emotion) => createEmojiTemplate(emotion)).join('')}
+                <p class="film-details__film-description">
+                  ${description}
+                </p>
               </div>
             </div>
-          </section>
-        </div>
-      </form>
-    </section>
-  `);
-};
+            ${createTypesTemplate(buttonType)}
+          </div>
+
+          <div class="film-details__bottom-container">
+            <section class="film-details__comments-wrap">
+              <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
+
+              <ul class="film-details__comments-list">
+                ${comments.map((comment) => new CommentView(comment).getTemplate()).join('')}
+              </ul>
+
+              <div class="film-details__new-comment">
+                <div class="film-details__add-emoji-label"></div>
+
+                <label class="film-details__comment-label">
+                  <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+                </label>
+
+                <div class="film-details__emoji-list">
+                  ${EMOTIONS.map((emotion) => createEmojiTemplate(emotion)).join('')}
+                </div>
+              </div>
+            </section>
+          </div>
+        </form>
+      </section>`
+    );
+  }
+}

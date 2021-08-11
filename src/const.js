@@ -4,3 +4,8 @@ export const EMOTIONS = [
   'puke',
   'angry',
 ];
+
+export const RenderPosition = {
+  AFTERBEGIN: 'afterbegin',
+  BEFOREEND: 'beforeend',
+};

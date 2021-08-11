@@ -4,7 +4,7 @@ const getFiltersCount = {
   favorites: (films) => films.filter((film) => film.inFavorites).length,
 };
 
-export const generateFilter = (films) => Object.entries(getFiltersCount).map(
+export const createFiltersMock = (films) => Object.entries(getFiltersCount).map(
   ([filterName, filterCount]) => ({
     name: filterName,
     count: filterCount(films),

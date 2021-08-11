@@ -1,4 +1,5 @@
 import { capitalizeFirstLetter } from '../utils/utils';
+import AbstractView from './abstract-view';
 
 const createFilterTemplate = (filter) => {
   const {name, count} = filter;
@@ -8,9 +9,18 @@ const createFilterTemplate = (filter) => {
   `);
 };
 
-export const createFiltersTemplate = (filters) => (`
-  <div class="main-navigation__items">
-    <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
-    ${filters.map((filter) => createFilterTemplate(filter)).join('')}
-  </div>
-`);
+export default class FiltersView extends AbstractView{
+  constructor(filters) {
+    super();
+    this._filters = filters;
+  }
+
+  getTemplate() {
+    return (
+      `<div class="main-navigation__items">
+        <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
+        ${this._filters.map((filter) => createFilterTemplate(filter)).join('')}
+      </div>`
+    );
+  }
+}
