@@ -1,4 +1,4 @@
-import { createElement } from '../utils/utils';
+import { createElement } from '../utils/render';
 
 export default class AbstractView {
   constructor() {
@@ -7,6 +7,7 @@ export default class AbstractView {
     }
 
     this._element = null;
+    this._callback = {};
   }
 
   getElement() {

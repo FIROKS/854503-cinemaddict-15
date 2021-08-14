@@ -32,6 +32,43 @@ export default class CardView extends AbstractView {
   constructor(filmInfo) {
     super();
     this._filmInfo = filmInfo;
+
+    this._titleClickHandler = this._titleClickHandler.bind(this);
+    this._commentClickHandler = this._commentClickHandler.bind(this);
+    this._posterClickHandler = this._posterClickHandler.bind(this);
+  }
+
+  _titleClickHandler(evt) {
+    evt.preventDefault();
+
+    this._callback.titleClick();
+  }
+
+  _commentClickHandler(evt) {
+    evt.preventDefault();
+
+    this._callback.commentClick();
+  }
+
+  _posterClickHandler(evt) {
+    evt.preventDefault();
+
+    this._callback.posterClick();
+  }
+
+  setTitleClickHandler(callback) {
+    this._callback.titleClick = callback;
+    this._element.querySelector('.film-card__title').addEventListener('click', this._titleClickHandler);
+  }
+
+  setCommentClickHandler(callback) {
+    this._callback.commentClick = callback;
+    this._element.querySelector('.film-card__comments').addEventListener('click', this._commentClickHandler);
+  }
+
+  setPosterHandler(callback) {
+    this._callback.posterClick = callback;
+    this._element.querySelector('.film-card__poster').addEventListener('click', this._posterClickHandler);
   }
 
   getTemplate() {
