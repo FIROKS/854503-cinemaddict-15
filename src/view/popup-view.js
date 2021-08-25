@@ -1,12 +1,12 @@
 import CommentView from './comment-view';
 import { EMOTIONS } from '../const';
-import { getFullDate } from '../utils/utils';
+import { getFullDate } from '../utils/film';
 import AbstractView from './abstract-view';
 
 const buttonType = [
-  ['watchlist', 'Add to watchlist'],
-  ['watched', 'Already watched'],
-  ['favorite', 'Add to favorites'],
+  ['watchlist', 'Add to watchlist', 'inWatchlist'],
+  ['watched', 'Already watched', 'inHistory'],
+  ['favorite', 'Add to favorites', 'inFavorites'],
 ];
 
 const createEmojiTemplate = (emojiType) => (`
@@ -47,9 +47,9 @@ const createGenresTemplate = (genres) => {
   `);
 };
 
-const createTypesTemplate = (types) => {
-  const createTypeTemplate = ([typeName, typeText]) => (`
-  <button type="button" class="film-details__control-button film-details__control-button--${typeName}" id="${typeName}" name="${typeName}">${typeText}</button>
+const createTypesTemplate = (types, filmData) => {
+  const createTypeTemplate = ([typeName, typeText, buttonProp]) => (`
+  <button type="button" class="film-details__control-button film-details__control-button--${typeName} ${filmData[buttonProp] ? 'film-details__control-button--active' : ''}" id="${typeName}" name="${typeName}">${typeText}</button>
   `);
 
   return (`
@@ -60,7 +60,7 @@ const createTypesTemplate = (types) => {
 };
 
 export default class PopupView extends AbstractView {
-  constructor (filmInfo) {
+  constructor (filmInfo = {}) {
     super();
     this._filmInfo = filmInfo;
     this._closeClickHandler = this._closeClickHandler.bind(this);
@@ -78,7 +78,7 @@ export default class PopupView extends AbstractView {
   }
 
   getTemplate() {
-    const {title, originalTitle, genres, director, writers, actors, country, poster, description, comments, rating, ageRating, date, duration, commentsCount} = this._filmInfo;
+    const {title, originalTitle, genres, director, writers, actors, country, poster, description, comments, rating, ageRating, date, duration, commentsCount, inFavorites, inHistory, inWatchlist} = this._filmInfo;
 
     const detailsItems = [
       ['Director', director],
@@ -127,7 +127,7 @@ export default class PopupView extends AbstractView {
                 </p>
               </div>
             </div>
-            ${createTypesTemplate(buttonType)}
+            ${createTypesTemplate(buttonType, {inFavorites, inHistory, inWatchlist})}
           </div>
 
           <div class="film-details__bottom-container">

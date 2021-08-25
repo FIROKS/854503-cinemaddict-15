@@ -9,3 +9,8 @@ export const RenderPosition = {
   AFTERBEGIN: 'afterbegin',
   BEFOREEND: 'beforeend',
 };
+
+export const Mode = {
+  DEFAULT: 'default',
+  DETAILS: 'details',
+};

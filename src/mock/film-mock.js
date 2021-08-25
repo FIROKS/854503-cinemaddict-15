@@ -1,5 +1,6 @@
 import { getRandomInteger, getRandomNumber } from '../utils/utils';
 import dayjs from 'dayjs';
+import { nanoid } from 'nanoid';
 import { createCommentMock } from './comment-mock';
 
 const titles = [
@@ -117,7 +118,7 @@ const generateNames = () => {
 };
 
 const generateComments = () => {
-  const amount = getRandomInteger(1, 5);
+  const amount = getRandomInteger(1, 20);
 
   return new Array(amount).fill().map(() => createCommentMock());
 };
@@ -127,6 +128,7 @@ export const createFilmMock = () => {
   const commentsCount = comments.length;
 
   return {
+    id: `a${nanoid()}`,
     title: generateTitle(),
     originalTitle: generateTitle(),
     genres: generateGenres(),
