@@ -3,7 +3,7 @@ import {createFilmMock} from './mock/film-mock';
 import {createFiltersMock} from './mock/filters-mock';
 import ExtraListPresenter from './presenter/extra-list-presenter';
 import FilmListPresenter from './presenter/list-presenter';
-import { sortMostComment, sortTopRated } from './utils/utils'
+import { sortMostComment, sortTopRated } from './utils/utils';
 
 
 const FILMS_AMOUNT = 17;

@@ -25,7 +25,7 @@ export const updateItem = (items, updatedItem) => {
     updatedItem,
     ...items.slice(index + 1),
   ];
-}
+};
 
 export const sortMostComment = (filmA, filmB) => {
   if (filmA.commentsCount > filmB.commentsCount) {
@@ -35,7 +35,7 @@ export const sortMostComment = (filmA, filmB) => {
   if (filmA.commentsCount < filmB.commentsCount) {
     return 1;
   }
-}
+};
 
 export const sortTopRated = (filmA, filmB) => {
   if (filmA.rating > filmB.rating) {
@@ -45,4 +45,4 @@ export const sortTopRated = (filmA, filmB) => {
   if (filmA.rating < filmB.rating) {
     return 1;
   }
-}
+};

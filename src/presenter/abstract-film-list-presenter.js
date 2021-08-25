@@ -1,5 +1,5 @@
 import { Mode } from '../const';
-import { updateItem } from '../utils/utils'
+import { updateItem } from '../utils/utils';
 import FilmPresenter from './card-presenter';
 import PopupPresenter from './popup-presenter';
 
@@ -14,7 +14,7 @@ export default class AbstractFilmListPresenter {
 
     this._handleFilmChange = this._handleFilmChange.bind(this);
   }
-  
+
   _handleFilmChange(updatedFilm) {
     this._films = updateItem(this._films, updatedFilm);
     this._popupComponent.init(updatedFilm);

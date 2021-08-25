@@ -1,4 +1,3 @@
-import ShowMoreView from '../view/show-more-view';
 import MenuView from '../view/menu-view';
 import UserRankView from '../view/user-view';
 import SortView from '../view/sort-view';
@@ -10,9 +9,9 @@ import {createFilmMock} from '../mock/film-mock';
 import {createFiltersMock} from '../mock/filters-mock';
 import ExtraListPresenter from './extra-list-presenter';
 import MainListPresenter from './list-presenter';
-import { sortMostComment, sortTopRated, updateItem } from '../utils/utils'
+import { sortMostComment, sortTopRated, updateItem } from '../utils/utils';
 import { RenderPosition, Mode } from '../const';
-import { render, remove, replace } from '../utils/render';
+import { render, remove } from '../utils/render';
 
 const FILMS_AMOUNT = 17;
 

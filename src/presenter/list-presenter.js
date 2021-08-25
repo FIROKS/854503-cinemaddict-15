@@ -6,7 +6,7 @@ import FilmsView from '../view/films-view';
 import FooterStatsView from '../view/footer-stats-view';
 import FiltersView from '../view/filters-view';
 import EmptyListView from '../view/empty-list-view';
-import { render, remove, replace } from '../utils/render';
+import { render, remove } from '../utils/render';
 import { RenderPosition } from '../const';
 import AbstractFilmListPresenter from './abstract-film-list-presenter';
 
@@ -97,7 +97,7 @@ export default class FilmListPresenter extends AbstractFilmListPresenter {
     const filmListElement = this._container.querySelector('.films-list');
 
     render(filmListElement, this._showMoreButtonComponent, RenderPosition.BEFOREEND);
-    this._showMoreButtonComponent.getElement().addEventListener('click', this._handleShowMoreClick)
+    this._showMoreButtonComponent.getElement().addEventListener('click', this._handleShowMoreClick);
   }
 
   _renderUser() {
