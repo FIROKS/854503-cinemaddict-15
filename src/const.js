@@ -14,3 +14,9 @@ export const Mode = {
   DEFAULT: 'default',
   DETAILS: 'details',
 };
+
+export const SortTypes = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating',
+}

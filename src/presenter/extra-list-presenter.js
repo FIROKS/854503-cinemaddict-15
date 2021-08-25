@@ -1,24 +1,19 @@
-import AbstractFilmListPresenter from './abstract-film-list-presenter';
+import AbstractListPresenter from './abstract-film-list-presenter';
 import ExtraView from '../view/extra-view';
 import { render } from '../utils/render';
 import { RenderPosition } from '../const';
 
 
-export default class ExtraListPresenter extends AbstractFilmListPresenter {
+export default class ExtraListPresenter extends AbstractListPresenter {
+  constructor(container, changeData, popupComponent, title) {
+    super(container, changeData, popupComponent);
 
-  init(title, films) {
-    this._films = films.slice();
     this._title = title;
-
-    this._renderExtraList();
+    this._filmListComponent = new ExtraView(this._title);
   }
 
-  _renderExtraList() {
-    const extraComponent = new ExtraView(this._title);
-
-    this._filmListContainerElement = extraComponent.getElement().querySelector('.films-list__container');
-
-    render(this._container, extraComponent, RenderPosition.BEFOREEND);
+  _renderList() {
+    super._renderList();
 
     this._renderCards(0, 2);
   }

@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -25,9 +27,9 @@ export const updateItem = (items, updatedItem) => {
     updatedItem,
     ...items.slice(index + 1),
   ];
-};
+}
 
-export const sortMostComment = (filmA, filmB) => {
+export const sortByCommentsAmount = (filmA, filmB) => {
   if (filmA.commentsCount > filmB.commentsCount) {
     return -1;
   }
@@ -35,9 +37,11 @@ export const sortMostComment = (filmA, filmB) => {
   if (filmA.commentsCount < filmB.commentsCount) {
     return 1;
   }
-};
 
-export const sortTopRated = (filmA, filmB) => {
+  return 0;
+}
+
+export const sortByRating = (filmA, filmB) => {
   if (filmA.rating > filmB.rating) {
     return -1;
   }
@@ -45,4 +49,18 @@ export const sortTopRated = (filmA, filmB) => {
   if (filmA.rating < filmB.rating) {
     return 1;
   }
-};
+
+  return 0;
+}
+
+export const sortByDate = (filmA, filmB) => {
+  if (dayjs(filmA.date).isAfter(filmB.date)) {
+    return -1;
+  }
+
+  if (dayjs(filmA.date).isBefore(filmB.date)) {
+    return 1;
+  }
+
+  return 0;
+}

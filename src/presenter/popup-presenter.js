@@ -50,7 +50,7 @@ export default class PopupPresenter {
       BODY_ELEMENT.classList.remove('hide-overflow');
     }
   }
-
+    
   _onEscKeydown(evt) {
     evt.preventDefault();
 

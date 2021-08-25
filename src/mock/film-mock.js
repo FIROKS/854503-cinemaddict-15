@@ -128,7 +128,7 @@ export const createFilmMock = () => {
   const commentsCount = comments.length;
 
   return {
-    id: `a${nanoid()}`,
+    id: nanoid(),
     title: generateTitle(),
     originalTitle: generateTitle(),
     genres: generateGenres(),
