@@ -1,5 +1,5 @@
-import { Mode, RenderPosition } from '../const';
-import { updateItem } from '../utils/utils';
+import { RenderPosition } from '../const';
+
 import { remove, render } from '../utils/render';
 import FilmPresenter from './card-presenter';
 
@@ -14,7 +14,7 @@ export default class AbstractListPresenter {
     this._filmListContainerElement = null;
     this._filmListComponent = null;
   }
-  
+
   init(films) {
     this._films = films.slice();
     this._renderList();
@@ -45,7 +45,7 @@ export default class AbstractListPresenter {
   }
 
   clearList() {
-    this._filmsPresenters.forEach((presenter) => presenter.destroy())
+    this._filmsPresenters.forEach((presenter) => presenter.destroy());
     this._filmsPresenters.clear();
     remove(this._filmListComponent);
   }

@@ -1,8 +1,5 @@
 import AbstractListPresenter from './abstract-film-list-presenter';
 import ExtraView from '../view/extra-view';
-import { render } from '../utils/render';
-import { RenderPosition } from '../const';
-
 
 export default class ExtraListPresenter extends AbstractListPresenter {
   constructor(container, changeData, popupComponent, title) {

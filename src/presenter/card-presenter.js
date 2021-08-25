@@ -10,7 +10,7 @@ export default class FilmPresenter {
     this._mode = Mode.DEFAULT;
 
     this._filmComponent = null;
-    
+
     this._handlePopup = this._handlePopup.bind(this);
   }
 
@@ -44,7 +44,7 @@ export default class FilmPresenter {
 
     remove(prevComponent);
   }
-  
+
   destroy() {
     remove(this._filmComponent);
   }

@@ -4,7 +4,7 @@ const sortTypes = [
   ['default', 'Sort by default'],
   ['date', 'Sort by date'],
   ['rating', 'Sort by rating'],
-]
+];
 
 const createSortTemplate = ([sortData, sortText], currentSortType) => `<li><a href="#" class="sort__button ${sortData === currentSortType ? 'sort__button--active' : ''}" data-sort-type="${sortData}">${sortText}</a></li>`;
 
@@ -20,7 +20,7 @@ export default class SortView extends AbstractView {
     if (evt.target.tagName !== 'A') {
       return;
     }
-    
+
     evt.preventDefault();
     const newSortType = evt.target.dataset.sortType;
 

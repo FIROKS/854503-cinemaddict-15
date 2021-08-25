@@ -27,7 +27,7 @@ export const updateItem = (items, updatedItem) => {
     updatedItem,
     ...items.slice(index + 1),
   ];
-}
+};
 
 export const sortByCommentsAmount = (filmA, filmB) => {
   if (filmA.commentsCount > filmB.commentsCount) {
@@ -39,7 +39,7 @@ export const sortByCommentsAmount = (filmA, filmB) => {
   }
 
   return 0;
-}
+};
 
 export const sortByRating = (filmA, filmB) => {
   if (filmA.rating > filmB.rating) {
@@ -51,7 +51,7 @@ export const sortByRating = (filmA, filmB) => {
   }
 
   return 0;
-}
+};
 
 export const sortByDate = (filmA, filmB) => {
   if (dayjs(filmA.date).isAfter(filmB.date)) {
@@ -63,4 +63,4 @@ export const sortByDate = (filmA, filmB) => {
   }
 
   return 0;
-}
+};

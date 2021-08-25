@@ -1,8 +1,7 @@
 
 import FilmsView from '../view/films-view';
-import EmptyListView from '../view/empty-list-view';
 import ShowMoreView from '../view/show-more-view';
-import { render, remove, replace } from '../utils/render';
+import { render, remove } from '../utils/render';
 import AbstractListPresenter from './abstract-film-list-presenter';
 import { RenderPosition } from '../const';
 
@@ -23,7 +22,7 @@ export default class MainListPresenter extends AbstractListPresenter {
     super._renderList();
 
     if (this._films.length === 0) {
-      this._renderEmptyList();    
+      this._renderEmptyList();
       this._sortComponent.getElement().remove();
     } else {
       this._renderCards(0, Math.min(this._films.length, CARD_PER_STEP));
@@ -47,7 +46,7 @@ export default class MainListPresenter extends AbstractListPresenter {
     const filmListElement = this._container.querySelector('.films-list');
 
     render(filmListElement, this._showMoreButtonComponent, RenderPosition.BEFOREEND);
-    this._showMoreButtonComponent.getElement().addEventListener('click', this._handleShowMoreClick)
+    this._showMoreButtonComponent.getElement().addEventListener('click', this._handleShowMoreClick);
   }
 
   clearList() {

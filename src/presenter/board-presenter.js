@@ -1,4 +1,3 @@
-import ShowMoreView from '../view/show-more-view';
 import MenuView from '../view/menu-view';
 import UserRankView from '../view/user-view';
 import SortView from '../view/sort-view';
@@ -10,9 +9,9 @@ import {createFilmMock} from '../mock/film-mock';
 import {createFiltersMock} from '../mock/filters-mock';
 import ExtraListPresenter from './extra-list-presenter';
 import MainListPresenter from './list-presenter';
-import { sortByCommentsAmount, sortByRating, updateItem, sortByDate } from '../utils/utils'
+import { sortByCommentsAmount, sortByRating, updateItem, sortByDate } from '../utils/utils';
 import { RenderPosition, Mode, SortTypes } from '../const';
-import { render, remove, replace } from '../utils/render';
+import { render, remove } from '../utils/render';
 
 const FILMS_AMOUNT = 17;
 
@@ -41,7 +40,7 @@ export default class BoardPresenter {
     this._mainListComponent = new MainListPresenter(this._filmsContainerElement, this._handleFilmChange, this._popupComponent);
     this._topRatedComponent = new ExtraListPresenter(this._filmsContainerElement, this._handleFilmChange, this._popupComponent, 'Top rated');
     this._mostCommentedComponent = new ExtraListPresenter(this._filmsContainerElement, this._handleFilmChange, this._popupComponent, 'Most commented');
-    
+
     this._handleFilmChange = this._handleFilmChange.bind(this);
     this._handleSortChange = this._handleSortChange.bind(this);
   }
@@ -53,7 +52,7 @@ export default class BoardPresenter {
     this._mainListComponent.init(this._films, this._filterMocks);
     this._topRatedComponent.init(this._topRatedFilms);
     this._mostCommentedComponent.init(this._mostCommentedFilms);
-    
+
     this._renderInterface();
   }
 
@@ -75,7 +74,7 @@ export default class BoardPresenter {
     if (this._currentSortType !== newSortType) {
       this._currentSortType = newSortType;
       this._clearBoard();
-      this.init()
+      this.init();
     }
   }
 
@@ -112,7 +111,7 @@ export default class BoardPresenter {
     render(this._mainElement, this._menuComponent, RenderPosition.AFTERBEGIN);
   }
 
-  _renderFilters() {  
+  _renderFilters() {
     this._filterComponent = new FiltersView(this._filterMocks);
 
     render(this._menuComponent, this._filterComponent, RenderPosition.AFTERBEGIN);
