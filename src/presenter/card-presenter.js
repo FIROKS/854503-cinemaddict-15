@@ -29,9 +29,9 @@ export default class FilmPresenter {
     this._filmComponent.setCommentClickHandler(this._handlePopup);
     this._filmComponent.setTitleClickHandler(this._handlePopup);
     this._filmComponent.setPosterHandler(this._handlePopup);
-    this._filmComponent.setFavoriteClickHandler();
-    this._filmComponent.setWatchedClickHandler();
-    this._filmComponent.setWatchlistClickHandler();
+    this._filmComponent.setFavoriteClickHandler(this._changeData);
+    this._filmComponent.setWatchedClickHandler(this._changeData);
+    this._filmComponent.setWatchlistClickHandler(this._changeData);
 
     if (prevComponent === null) {
       render(this._container, this._filmComponent, RenderPosition.BEFOREEND);

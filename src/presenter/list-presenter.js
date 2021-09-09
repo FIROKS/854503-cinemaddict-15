@@ -18,8 +18,13 @@ export default class MainListPresenter extends AbstractListPresenter {
     this._handleShowMoreClick = this._handleShowMoreClick.bind(this);
   }
 
-  _renderList() {
-    super._renderList();
+  _reInit() {
+    this.clearList();
+    this._filmListComponent = new FilmsView();
+  }
+
+  renderList() {
+    super.renderList();
 
     if (this._films.length === 0) {
       this._renderEmptyList();

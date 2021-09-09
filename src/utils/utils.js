@@ -30,11 +30,13 @@ export const updateItem = (items, updatedItem) => {
 };
 
 export const sortByCommentsAmount = (filmA, filmB) => {
-  if (filmA.commentsCount > filmB.commentsCount) {
+  const commentCountA = filmA.comments.length;
+  const commentCountB = filmB.comments.length;
+  if (commentCountA > commentCountB) {
     return -1;
   }
 
-  if (filmA.commentsCount < filmB.commentsCount) {
+  if (commentCountA < commentCountB) {
     return 1;
   }
 

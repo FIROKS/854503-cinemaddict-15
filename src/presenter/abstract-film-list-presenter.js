@@ -1,5 +1,4 @@
 import { RenderPosition } from '../const';
-
 import { remove, render } from '../utils/render';
 import FilmPresenter from './card-presenter';
 
@@ -17,9 +16,12 @@ export default class AbstractListPresenter {
 
   init(films) {
     this._films = films.slice();
-    this._renderList();
+    this.renderList();
   }
 
+  _reInit() {
+    throw new Error('Abstract method not implemented: _reInit');
+  }
 
   get filmsPresenters() {
     return this._filmsPresenters;
@@ -38,15 +40,24 @@ export default class AbstractListPresenter {
       .forEach((film) => this._renderCard(film));
   }
 
-  _renderList() {
-    render(this._container, this._filmListComponent, RenderPosition.BEFOREEND);
+  renderList() {
+    const prevComponent = this._filmListComponent;
 
+    if (this._container.contains(prevComponent.getElement())) {
+      this._reInit();
+      remove(prevComponent);
+    }
+
+    render(this._container, this._filmListComponent, RenderPosition.BEFOREEND);
     this._filmListContainerElement = this._filmListComponent.getElement().querySelector('.films-list__container');
   }
 
-  clearList() {
+  clearList(removeView = false) {
     this._filmsPresenters.forEach((presenter) => presenter.destroy());
     this._filmsPresenters.clear();
-    remove(this._filmListComponent);
+
+    if (removeView) {
+      remove(this._filmListComponent);
+    }
   }
 }

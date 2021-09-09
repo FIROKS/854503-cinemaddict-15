@@ -29,10 +29,9 @@ const createTypesTemplate = (types, filmData) => {
 };
 
 export default class CardView extends AbstractView {
-  constructor(filmData, changeData) {
+  constructor(filmData) {
     super();
     this._filmData = filmData;
-    this._changeData = changeData;
 
     this._titleClickHandler = this._titleClickHandler.bind(this);
     this._commentClickHandler = this._commentClickHandler.bind(this);
@@ -63,8 +62,7 @@ export default class CardView extends AbstractView {
   _favoriteClickHandler(evt) {
     evt.preventDefault();
 
-    // this._callback.favoriteClick();
-    this._changeData(Object.assign(
+    this._callback.favoriteClick(Object.assign(
       {},
       this._filmData,
       {
@@ -76,8 +74,7 @@ export default class CardView extends AbstractView {
   _watchedClickHandler(evt) {
     evt.preventDefault();
 
-    // this._callback.watchedClick();
-    this._changeData(Object.assign(
+    this._callback.watchedClick(Object.assign(
       {},
       this._filmData,
       {
@@ -89,8 +86,7 @@ export default class CardView extends AbstractView {
   _watchlistClickHandler(evt) {
     evt.preventDefault();
 
-    // this._callback.watchlistClick();
-    this._changeData(Object.assign(
+    this._callback.watchlistClick(Object.assign(
       {},
       this._filmData,
       {
@@ -130,7 +126,7 @@ export default class CardView extends AbstractView {
   }
 
   getTemplate() {
-    const {title, rating, date, duration, genres, poster, description, commentsCount, inHistory, inFavorites, inWatchlist} = this._filmData;
+    const {title, rating, date, duration, genres, poster, description, comments, inHistory, inFavorites, inWatchlist} = this._filmData;
 
     return (
       `<article class="film-card">
@@ -143,7 +139,7 @@ export default class CardView extends AbstractView {
         </p>
         <img src="./images/posters/${poster}" alt="" class="film-card__poster">
         <p class="film-card__description">${formatDescription(description)}</p>
-        <a class="film-card__comments">${commentsCount} ${commentsCount > 1 ? 'comments' : 'comment'}</a>
+        <a class="film-card__comments">${comments.length} ${comments.length > 1 || comments.length === 0 ? 'comments' : 'comment'}</a>
         ${createTypesTemplate(buttonType, {inHistory, inFavorites, inWatchlist})}
       </article>`
     );

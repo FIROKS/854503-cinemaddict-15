@@ -14,6 +14,9 @@ import { RenderPosition, Mode, SortTypes } from '../const';
 import { render, remove } from '../utils/render';
 
 const FILMS_AMOUNT = 17;
+const mainElement = document.querySelector('.main');
+const headerElement = document.querySelector('.header');
+const footerElement = document.querySelector('.footer');
 
 export default class BoardPresenter {
   constructor() {
@@ -25,7 +28,6 @@ export default class BoardPresenter {
     this._userRankComponent = new UserRankView();
     this._menuComponent = new MenuView();
     this._footerStatsComponent = new FooterStatsView();
-    this._popupComponent = new PopupPresenter();
 
     this._sourcedFilmMocks = new Array(FILMS_AMOUNT).fill().map(() => createFilmMock());
     this._filterMocks = createFiltersMock(this._sourcedFilmMocks);
@@ -34,19 +36,20 @@ export default class BoardPresenter {
     this._mostCommentedFilms = null;
     this._currentSortType = SortTypes.DEFAULT;
 
-    this._mainElement = document.querySelector('.main');
     this._filmsContainerElement = document.querySelector('.films');
-
-    this._mainListComponent = new MainListPresenter(this._filmsContainerElement, this._handleFilmChange, this._popupComponent);
-    this._topRatedComponent = new ExtraListPresenter(this._filmsContainerElement, this._handleFilmChange, this._popupComponent, 'Top rated');
-    this._mostCommentedComponent = new ExtraListPresenter(this._filmsContainerElement, this._handleFilmChange, this._popupComponent, 'Most commented');
 
     this._handleFilmChange = this._handleFilmChange.bind(this);
     this._handleSortChange = this._handleSortChange.bind(this);
+
+    this._popupComponent = new PopupPresenter(this._handleFilmChange);
+    this._mainListComponent = new MainListPresenter(this._filmsContainerElement, this._handleFilmChange, this._popupComponent);
+    this._topRatedComponent = new ExtraListPresenter(this._filmsContainerElement, this._handleFilmChange, this._popupComponent, 'Top rated');
+    this._mostCommentedComponent = new ExtraListPresenter(this._filmsContainerElement, this._handleFilmChange, this._popupComponent, 'Most commented');
   }
 
   init() {
-    this._sortForExtraSections();
+    this._sortTopRatedFilms();
+    this._sortMostCommentedFilms();
     this._sortList();
 
     this._mainListComponent.init(this._films, this._filterMocks);
@@ -56,7 +59,7 @@ export default class BoardPresenter {
     this._renderInterface();
   }
 
-  _handleFilmChange(updatedFilm) {
+  _handleFilmChange(updatedFilm, commentsChange) {
     this._films = updateItem(this._films, updatedFilm);
     this._popupComponent.init(updatedFilm);
 
@@ -67,6 +70,10 @@ export default class BoardPresenter {
     // Если попап уже открыт, а данные изменились, то перерисовываем его
     if (this._popupComponent.mode === Mode.DETAILS) {
       this._popupComponent._renderPopup();
+      if (commentsChange) {
+        this._sortMostCommentedFilms();
+        this._mostCommentedComponent.init(this._mostCommentedFilms);
+      }
     }
   }
 
@@ -94,8 +101,11 @@ export default class BoardPresenter {
     }
   }
 
-  _sortForExtraSections() {
+  _sortTopRatedFilms() {
     this._topRatedFilms = this._films.slice().sort(sortByRating);
+  }
+
+  _sortMostCommentedFilms() {
     this._mostCommentedFilms = this._films.slice().sort(sortByCommentsAmount);
   }
 
@@ -108,7 +118,7 @@ export default class BoardPresenter {
   }
 
   _renderMenu() {
-    render(this._mainElement, this._menuComponent, RenderPosition.AFTERBEGIN);
+    render(mainElement, this._menuComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderFilters() {
@@ -120,20 +130,16 @@ export default class BoardPresenter {
   _renderSort() {
     this._sortComponent = new SortView(this._currentSortType);
 
-    render(this._mainElement, this._sortComponent, RenderPosition.AFTERBEGIN);
+    render(mainElement, this._sortComponent, RenderPosition.AFTERBEGIN);
 
     this._sortComponent.setSortTypeChangeHandler(this._handleSortChange);
   }
 
   _renderUser() {
-    const headerElement = document.querySelector('.header');
-
     render(headerElement, this._userRankComponent, RenderPosition.BEFOREEND);
   }
 
   _renderFooterStats() {
-    const footerElement = document.querySelector('.footer');
-
     render(footerElement, this._footerStatsComponent, RenderPosition.BEFOREEND);
   }
 
@@ -142,9 +148,9 @@ export default class BoardPresenter {
   }
 
   _clearBoard() {
-    this._mainListComponent.clearList();
-    this._topRatedComponent.clearList();
-    this._mostCommentedComponent.clearList();
+    this._mainListComponent.clearList(true);
+    this._topRatedComponent.clearList(true);
+    this._mostCommentedComponent.clearList(true);
     remove(this._sortComponent);
     remove(this._menuComponent);
     remove(this._filterComponent);

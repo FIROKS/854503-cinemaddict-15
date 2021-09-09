@@ -5,8 +5,9 @@ import PopupView from '../view/popup-view';
 const BODY_ELEMENT = document.body;
 
 export default class PopupPresenter {
-  constructor() {
+  constructor(changeData) {
     this._popupComponent = null;
+    this._changeData = changeData;
 
     this._removePopup = this._removePopup.bind(this);
     this._onEscKeydown = this._onEscKeydown.bind(this);
@@ -35,15 +36,21 @@ export default class PopupPresenter {
 
     } else if (BODY_ELEMENT.contains(oldPopupElement.getElement())) {
       replace(oldPopupElement, this._popupComponent);
+      this._popupComponent.getElement().scrollTop = oldPopupElement.scrollPosition;
       remove(oldPopupElement);
     }
 
     this._popupComponent.setCloseClickHandler(this._removePopup);
+    this._popupComponent.setFavoriteClickHandler(this._changeData);
+    this._popupComponent.setWatchedClickHandler(this._changeData);
+    this._popupComponent.setWatchlistClickHandler(this._changeData);
+    this._popupComponent.setCommentSubmitHandler(this._changeData);
     this._mode = Mode.DETAILS;
   }
 
   _removePopup() {
     if (this._popupComponent) {
+      this._popupComponent.reset(this._filmData);
       remove(this._popupComponent);
       this._popupComponent = null;
       this._mode = Mode.DEFAULT;
@@ -52,9 +59,10 @@ export default class PopupPresenter {
   }
 
   _onEscKeydown(evt) {
-    evt.preventDefault();
-
     if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+
+      this._popupComponent.reset(this._filmData);
       this._removePopup();
       document.removeEventListener('keydown', this._onEscKeydown);
     }

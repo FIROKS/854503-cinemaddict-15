@@ -118,14 +118,13 @@ const generateNames = () => {
 };
 
 const generateComments = () => {
-  const amount = getRandomInteger(1, 20);
+  const amount = getRandomInteger(0, 20);
 
   return new Array(amount).fill().map(() => createCommentMock());
 };
 
 export const createFilmMock = () => {
   const comments = generateComments();
-  const commentsCount = comments.length;
 
   return {
     id: nanoid(),
@@ -143,7 +142,6 @@ export const createFilmMock = () => {
     ageRating: geterateAgeRating(),
     date: generateDate(),
     duration: geterateDuration(),
-    commentsCount,
     inWatchlist: Boolean(getRandomInteger(0, 1)),
     inHistory: Boolean(getRandomInteger(0, 1)),
     inFavorites: Boolean(getRandomInteger(0, 1)),

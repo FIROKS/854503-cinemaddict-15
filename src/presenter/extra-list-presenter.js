@@ -9,8 +9,13 @@ export default class ExtraListPresenter extends AbstractListPresenter {
     this._filmListComponent = new ExtraView(this._title);
   }
 
-  _renderList() {
-    super._renderList();
+  _reInit() {
+    this.clearList();
+    this._filmListComponent = new ExtraView(this._title);
+  }
+
+  renderList() {
+    super.renderList();
 
     this._renderCards(0, 2);
   }
