@@ -1,6 +1,7 @@
 import { getRandomInteger } from '../utils/utils';
 import dayjs from 'dayjs';
 import { EMOTIONS } from '../const';
+import { nanoid } from 'nanoid';
 
 const text = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -44,6 +45,7 @@ const generateDate = () => {
 };
 
 export const createCommentMock = () => ({
+  id: nanoid(),
   date: generateDate(),
   author: generateAuthor(),
   message: generateMessage(),

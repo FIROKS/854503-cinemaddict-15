@@ -17,6 +17,6 @@ export default class ExtraListPresenter extends AbstractListPresenter {
   renderList() {
     super.renderList();
 
-    this._renderCards(0, 2);
+    this._renderCards(this._films.slice(0, 2));
   }
 }

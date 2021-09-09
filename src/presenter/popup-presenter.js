@@ -26,18 +26,19 @@ export default class PopupPresenter {
   }
 
   _renderPopup() {
-    const oldPopupElement = this._popupComponent;
+    const oldPopupComponent = this._popupComponent;
     this._popupComponent = new PopupView(this._filmData);
 
-    if (oldPopupElement === null) {
+    if (oldPopupComponent === null) {
       render(BODY_ELEMENT, this._popupComponent, RenderPosition.BEFOREEND);
       BODY_ELEMENT.classList.add('hide-overflow');
       document.addEventListener('keydown', this._onEscKeydown);
 
-    } else if (BODY_ELEMENT.contains(oldPopupElement.getElement())) {
-      replace(oldPopupElement, this._popupComponent);
-      this._popupComponent.getElement().scrollTop = oldPopupElement.scrollPosition;
-      remove(oldPopupElement);
+    } else if (BODY_ELEMENT.contains(oldPopupComponent.getElement())) {
+      const scrollPosition = oldPopupComponent.getElement().scrollTop;
+      replace(oldPopupComponent, this._popupComponent);
+      this._popupComponent.getElement().scrollTop = scrollPosition;
+      remove(oldPopupComponent);
     }
 
     this._popupComponent.setCloseClickHandler(this._removePopup);
@@ -45,6 +46,7 @@ export default class PopupPresenter {
     this._popupComponent.setWatchedClickHandler(this._changeData);
     this._popupComponent.setWatchlistClickHandler(this._changeData);
     this._popupComponent.setCommentSubmitHandler(this._changeData);
+    this._popupComponent.setCommentDeleteHandler(this._changeData);
     this._mode = Mode.DETAILS;
   }
 

@@ -15,20 +15,6 @@ export const getRandomNumber = (a = 1, b = 0) => {
 
 export const capitalizeFirstLetter = (string) => `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
 
-export const updateItem = (items, updatedItem) => {
-  const index = items.findIndex((item) => item.id === updatedItem.id);
-
-  if (index === -1) {
-    return;
-  }
-
-  return [
-    ...items.slice(0, index),
-    updatedItem,
-    ...items.slice(index + 1),
-  ];
-};
-
 export const sortByCommentsAmount = (filmA, filmB) => {
   const commentCountA = filmA.comments.length;
   const commentCountB = filmB.comments.length;
@@ -66,3 +52,5 @@ export const sortByDate = (filmA, filmB) => {
 
   return 0;
 };
+
+export const findIndex = (data, value, prop) => data.findIndex((item) => item[prop] === value);

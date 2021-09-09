@@ -1,4 +1,5 @@
-import { getYear } from '../utils/film';
+import { ActionTypes, UpdateType } from '../const';
+import { getDurationFormat, getYear } from '../utils/film';
 import AbstractView from './abstract-view';
 
 const buttonType = [
@@ -59,40 +60,53 @@ export default class CardView extends AbstractView {
     this._callback.posterClick();
   }
 
+  // вынести в презентер ??
   _favoriteClickHandler(evt) {
     evt.preventDefault();
 
-    this._callback.favoriteClick(Object.assign(
-      {},
-      this._filmData,
-      {
-        inFavorites: !this._filmData.inFavorites,
-      },
-    ));
+    this._callback.favoriteClick(
+      ActionTypes.UPDATE_FILM,
+      UpdateType.PATCH,
+      Object.assign(
+        {},
+        this._filmData,
+        {
+          inFavorites: !this._filmData.inFavorites,
+        },
+      ),
+    );
   }
 
   _watchedClickHandler(evt) {
     evt.preventDefault();
 
-    this._callback.watchedClick(Object.assign(
-      {},
-      this._filmData,
-      {
-        inHistory: !this._filmData.inHistory,
-      },
-    ));
+    this._callback.watchedClick(
+      ActionTypes.UPDATE_FILM,
+      UpdateType.PATCH,
+      Object.assign(
+        {},
+        this._filmData,
+        {
+          inHistory: !this._filmData.inHistory,
+        },
+      ),
+    );
   }
 
   _watchlistClickHandler(evt) {
     evt.preventDefault();
 
-    this._callback.watchlistClick(Object.assign(
-      {},
-      this._filmData,
-      {
-        inWatchlist: !this._filmData.inWatchlist,
-      },
-    ));
+    this._callback.watchlistClick(
+      ActionTypes.UPDATE_FILM,
+      UpdateType.PATCH,
+      Object.assign(
+        {},
+        this._filmData,
+        {
+          inWatchlist: !this._filmData.inWatchlist,
+        },
+      ),
+    );
   }
 
   setFavoriteClickHandler(callback) {
@@ -134,7 +148,7 @@ export default class CardView extends AbstractView {
         <p class="film-card__rating">${rating}</p>
         <p class="film-card__info">
           <span class="film-card__year">${getYear(date)}</span>
-          <span class="film-card__duration">${duration}</span>
+          <span class="film-card__duration">${getDurationFormat(duration)}</span>
           <span class="film-card__genre">${genres[0]}</span>
         </p>
         <img src="./images/posters/${poster}" alt="" class="film-card__poster">

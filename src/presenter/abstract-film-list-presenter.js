@@ -14,7 +14,7 @@ export default class AbstractListPresenter {
     this._filmListComponent = null;
   }
 
-  init(films) {
+  init(films = []) {
     this._films = films.slice();
     this.renderList();
   }
@@ -27,6 +27,10 @@ export default class AbstractListPresenter {
     return this._filmsPresenters;
   }
 
+  get filmListContainerElement() {
+    return this._filmListContainerElement;
+  }
+
   _renderCard(filmInfo) {
     const filmInstance = new FilmPresenter(this._filmListContainerElement, this._changeData, this._popupComponent);
 
@@ -34,10 +38,8 @@ export default class AbstractListPresenter {
     this._filmsPresenters.set(filmInfo.id, filmInstance);
   }
 
-  _renderCards(from, to) {
-    this._films
-      .slice(from, to)
-      .forEach((film) => this._renderCard(film));
+  _renderCards(films) {
+    films.forEach((film) => this._renderCard(film));
   }
 
   renderList() {

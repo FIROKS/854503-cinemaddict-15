@@ -27,20 +27,23 @@ export default class MainListPresenter extends AbstractListPresenter {
     super.renderList();
 
     if (this._films.length === 0) {
-      this._renderEmptyList();
-      this._sortComponent.getElement().remove();
-    } else {
-      this._renderCards(0, Math.min(this._films.length, CARD_PER_STEP));
+      return;
     }
 
-    if (this._films.length > CARD_PER_STEP) {
+    this._renderCards(this._films.slice(0, Math.min(this._films.length, this._renderedCardsCount)));
+
+    if (this._films.length > this._renderedCardsCount) {
       this._renderShowMore();
     }
   }
 
   _handleShowMoreClick() {
-    this._renderCards(this._renderedCardsCount, this._renderedCardsCount + CARD_PER_STEP);
-    this._renderedCardsCount += CARD_PER_STEP;
+    const cardCount = this._films.length;
+    const newRenderedCards = Math.min(cardCount, this._renderedCardsCount + CARD_PER_STEP);
+    const cards = this._films.slice(this._renderedCardsCount, newRenderedCards);
+
+    this._renderedCardsCount = newRenderedCards;
+    this._renderCards(cards);
 
     if (this._renderedCardsCount >= this._films.length) {
       remove(this._showMoreButtonComponent);
@@ -54,10 +57,12 @@ export default class MainListPresenter extends AbstractListPresenter {
     this._showMoreButtonComponent.getElement().addEventListener('click', this._handleShowMoreClick);
   }
 
-  clearList() {
-    super.clearList();
+  clearList(removeView, resetRenderedCardsCount) {
+    super.clearList(removeView);
 
-    this._renderedCardsCount = CARD_PER_STEP;
+    if (resetRenderedCardsCount) {
+      this._renderedCardsCount = CARD_PER_STEP;
+    }
     remove(this._showMoreButtonComponent);
   }
 }

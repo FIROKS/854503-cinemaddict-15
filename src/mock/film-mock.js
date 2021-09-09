@@ -43,12 +43,17 @@ const names = [
 ];
 
 const genres = [
-  'Drama',
-  'Film-Noir',
-  'Mystery',
+  // 'Drama',
+  // 'Film-Noir',
+  // 'Mystery',
+  // 'Comedy',
+  // 'Western',
+  // 'Musical',
+  'Sci-Fi',
+  'Animation',
+  'Fantasy',
   'Comedy',
-  'Western',
-  'Musical',
+  'TV Series',
 ];
 
 const countries = [
@@ -96,7 +101,7 @@ const generateDate = () => {
     .add(randomPeriods.day, 'day').toDate();
 };
 
-const geterateDuration = () => dayjs().format('H[h] mm[m]');
+const geterateDuration = () => dayjs();
 
 const geterateRating = () => getRandomNumber(0, 10).toString().slice(0, 3);
 
