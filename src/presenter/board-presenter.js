@@ -5,11 +5,10 @@ import FooterStatsView from '../view/footer-stats-view';
 import EmptyListView from '../view/empty-list-view';
 import PopupPresenter from './popup-presenter';
 import {createFilmMock} from '../mock/film-mock';
-import {createFiltersMock} from '../mock/filters-mock';
 import ExtraListPresenter from './extra-list-presenter';
 import MainListPresenter from './list-presenter';
 import { sortByCommentsAmount, sortByRating, sortByDate } from '../utils/utils';
-import { RenderPosition, Mode, SortTypes, ActionTypes, UpdateType, FilterTypes } from '../const';
+import { RenderPosition, Mode, SortTypes, ActionTypes, UpdateType } from '../const';
 import { render, remove } from '../utils/render';
 import FilmModel from '../model/film-model';
 import FilterPresenter from './filter-presenter';
@@ -17,13 +16,12 @@ import FilterModel from '../model/filter-model';
 import { filter } from '../utils/filter';
 import StatsView from '../view/stats-view';
 
-const FILMS_AMOUNT = 17;
 const mainElement = document.querySelector('.main');
 const headerElement = document.querySelector('.header');
 const footerElement = document.querySelector('.footer');
 
 export default class BoardPresenter {
-  constructor() {
+  constructor(filmModel, api) {
     this._mainListComponent = null;
     this._topRatedComponent = null;
     this._mostCommentedComponent = null;
@@ -31,12 +29,13 @@ export default class BoardPresenter {
     this._userRankComponent = new UserRankView();
     this._menuComponent = new MenuView();
     this._footerStatsComponent = new FooterStatsView();
-    this._filmModel = new FilmModel();
+    this._filmModel = filmModel;
     this._filterModel = new FilterModel();
     this._statsComponent = null;
+    this._api = api;
 
-    this._sourcedFilmMocks = new Array(FILMS_AMOUNT).fill().map(() => createFilmMock());
-    this._filmModel.films = this._sourcedFilmMocks;
+    // this._sourcedFilmMocks = films;
+    // this._filmModel.films = this._sourcedFilmMocks;
     this._topRatedFilms = null;
     this._mostCommentedFilms = null;
     this._currentSortType = SortTypes.DEFAULT;
@@ -49,7 +48,7 @@ export default class BoardPresenter {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleStatsClick = this._handleStatsClick.bind(this);
 
-    this._popupComponent = new PopupPresenter(this._handleViewAction);
+    this._popupComponent = new PopupPresenter(this._handleViewAction, this._api);
     this._mainListComponent = new MainListPresenter(this._filmsContainerElement, this._handleViewAction, this._popupComponent);
     this._topRatedComponent = new ExtraListPresenter(this._filmsContainerElement, this._handleViewAction, this._popupComponent, 'Top rated');
     this._mostCommentedComponent = new ExtraListPresenter(this._filmsContainerElement, this._handleViewAction, this._popupComponent, 'Most commented');
