@@ -1,3 +1,4 @@
+import { UpdateType } from '../const';
 import Observer from '../utils/observer';
 
 export default class FilmModel extends Observer {
@@ -13,6 +14,8 @@ export default class FilmModel extends Observer {
 
   set films(films) {
     this._films = films.slice();
+
+    this._notify(UpdateType.INIT);
   }
 
   updatefilm(updateType, update) {

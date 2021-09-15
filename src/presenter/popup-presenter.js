@@ -13,6 +13,8 @@ export default class PopupPresenter {
     this._removePopup = this._removePopup.bind(this);
     this._onEscKeydown = this._onEscKeydown.bind(this);
     this._mode = Mode.DEFAULT;
+
+    this._handleCommentsFetch = this._handleCommentsFetch.bind(this);
   }
 
   init(filmData) {
@@ -26,43 +28,41 @@ export default class PopupPresenter {
     return this._mode;
   }
 
-  _renderPopup() {
-    this._api.getComments(this._filmData.id)
-      .then((comments) => {
-        this._filmData = Object.assign(
-          {},
-          this._filmData,
-          {comments},
-        );
-        console.log(`asdf`);
-        const oldPopupComponent = this._popupComponent;
-        this._popupComponent = new PopupView(this._filmData);
+  _handleCommentsFetch() {
+    return new Promise((resolve) => {
+      const comments = this._api.getComments(this._filmData.id);
+      resolve(comments);
+    }) ;
+  }
 
-        if (oldPopupComponent === null) {
-          render(BODY_ELEMENT, this._popupComponent, RenderPosition.BEFOREEND);
-          BODY_ELEMENT.classList.add('hide-overflow');
-          document.addEventListener('keydown', this._onEscKeydown);
+  renderPopup() {
+    const oldPopupComponent = this._popupComponent;
+    this._popupComponent = new PopupView(this._filmData, this._handleCommentsFetch);
 
-        } else if (BODY_ELEMENT.contains(oldPopupComponent.getElement())) {
-          const scrollPosition = oldPopupComponent.getElement().scrollTop;
-          replace(oldPopupComponent, this._popupComponent);
-          this._popupComponent.getElement().scrollTop = scrollPosition;
-          remove(oldPopupComponent);
-        }
+    if (oldPopupComponent === null) {
+      render(BODY_ELEMENT, this._popupComponent, RenderPosition.BEFOREEND);
+      BODY_ELEMENT.classList.add('hide-overflow');
+      document.addEventListener('keydown', this._onEscKeydown);
 
-        this._popupComponent.setCloseClickHandler(this._removePopup);
-        this._popupComponent.setFavoriteClickHandler(this._changeData);
-        this._popupComponent.setWatchedClickHandler(this._changeData);
-        this._popupComponent.setWatchlistClickHandler(this._changeData);
-        this._popupComponent.setCommentSubmitHandler(this._changeData);
-        this._popupComponent.setCommentDeleteHandler(this._changeData);
-        this._mode = Mode.DETAILS;
-      });
+    } else if (BODY_ELEMENT.contains(oldPopupComponent.getElement())) {
+      const scrollPosition = oldPopupComponent.getElement().scrollTop;
+      replace(oldPopupComponent, this._popupComponent);
+      this._popupComponent.getElement().scrollTop = scrollPosition;
+      remove(oldPopupComponent);
+    }
+
+    this._popupComponent.setCloseClickHandler(this._removePopup);
+    this._popupComponent.setFavoriteClickHandler(this._changeData);
+    this._popupComponent.setWatchedClickHandler(this._changeData);
+    this._popupComponent.setWatchlistClickHandler(this._changeData);
+    this._popupComponent.setCommentSubmitHandler(this._changeData);
+    this._popupComponent.setCommentDeleteHandler(this._changeData);
+    this._mode = Mode.DETAILS;
   }
 
   _removePopup() {
     if (this._popupComponent) {
-      this._popupComponent.reset(this._filmData);
+      // this._popupComponent.reset(this._filmData);
       remove(this._popupComponent);
       this._popupComponent = null;
       this._mode = Mode.DEFAULT;

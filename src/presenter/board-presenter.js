@@ -15,6 +15,7 @@ import FilterPresenter from './filter-presenter';
 import FilterModel from '../model/filter-model';
 import { filter } from '../utils/filter';
 import StatsView from '../view/stats-view';
+import LoadingView from '../view/loading-view';
 
 const mainElement = document.querySelector('.main');
 const headerElement = document.querySelector('.header');
@@ -31,8 +32,10 @@ export default class BoardPresenter {
     this._footerStatsComponent = new FooterStatsView();
     this._filmModel = filmModel;
     this._filterModel = new FilterModel();
+    this._loadingComponent = new LoadingView();
     this._statsComponent = null;
     this._api = api;
+    this._isLoading = true;
 
     // this._sourcedFilmMocks = films;
     // this._filmModel.films = this._sourcedFilmMocks;
@@ -76,6 +79,11 @@ export default class BoardPresenter {
   }
 
   _renderBord() {
+    if (this._isLoading) {
+      this._mainListComponent.init();
+      this._renderLoading();
+      return;
+    }
     const filmCount = this._getFilms().length;
     this._sortTopRatedFilms();
     this._sortMostCommentedFilms();
@@ -138,7 +146,7 @@ export default class BoardPresenter {
         // обновить попап
         if (this._popupComponent.mode === Mode.DETAILS) {
           this._popupComponent.init(update);
-          this._popupComponent._renderPopup();
+          this._popupComponent.renderPopup();
         }
         break;
       }
@@ -153,7 +161,7 @@ export default class BoardPresenter {
         if (this._popupComponent.mode === Mode.DETAILS) {
           // обновить попап
           this._popupComponent.init(update);
-          this._popupComponent._renderPopup();
+          this._popupComponent.renderPopup();
           this._sortMostCommentedFilms();
           this._mostCommentedComponent.init(this._mostCommentedFilms);
         }
@@ -167,9 +175,13 @@ export default class BoardPresenter {
         this._renderBord();
         // обновить попап
         if (this._popupComponent.mode === Mode.DETAILS) {
-          this._popupComponent._renderPopup();
+          this._popupComponent.renderPopup();
         }
         break;
+      }
+      case UpdateType.INIT: {
+        this._isLoading = false;
+        this._renderBord();
       }
     }
   }
@@ -227,6 +239,10 @@ export default class BoardPresenter {
 
   _renderEmptyList() {
     render(this._mainListComponent.filmListContainerElement, new EmptyListView(this._filterModel.currentFilter), RenderPosition.AFTERBEGIN);
+  }
+
+  _renderLoading() {
+    render(this._mainListComponent.filmListContainerElement, this._loadingComponent, RenderPosition.AFTERBEGIN);
   }
 
   _clearBoard(resetRenderedCardsCount = false, resetFilterType = false) {

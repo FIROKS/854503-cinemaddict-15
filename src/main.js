@@ -8,10 +8,16 @@ const AUTHORIZATION = 'Basic hP3Up2A2H';
 const api = new Api(ENDPOINT, AUTHORIZATION);
 const filmModel = new FilmModel(api);
 const boardPresenter = new BoardPresenter(filmModel, api);
-api.getFilms().then((films) => {
-  filmModel.films = films;
-  boardPresenter.init();
-});
+
+boardPresenter.init();
+
+api.getFilms()
+  .then((films) => {
+    filmModel.films = films;
+  })
+  .catch(() => {
+    filmModel.films = [];
+  });
 
 // comments: ['301']
 // film_info: {

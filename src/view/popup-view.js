@@ -1,8 +1,10 @@
 import CommentView from './comment-view';
-import { EMOTIONS, UpdateType, ActionTypes } from '../const';
+import { EMOTIONS, UpdateType, ActionTypes, RenderPosition } from '../const';
 import { getDurationFormat, getFullDate } from '../utils/film';
 import SmartView from './smart-view';
 import dayjs from 'dayjs';
+import { render } from '../utils/render';
+import LoadingView from './loading-view';
 
 const buttonType = [
   ['watchlist', 'Add to watchlist', 'inWatchlist'],
@@ -61,7 +63,7 @@ const createTypesTemplate = (types, filmData) => {
 };
 
 const createCommentsTemplate = (comments, commentsCount = 0) => {
-  if (commentsCount !== 0) {
+  if (comments && commentsCount !== 0) {
     return (
       `<ul class="film-details__comments-list">
         ${comments.map((comment) => new CommentView(comment).getTemplate()).join('')}
@@ -78,10 +80,12 @@ const createEmojiImgTemplate = (emotion) => {
   return `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">`;
 };
 export default class PopupView extends SmartView {
-  constructor (filmInfo = {}) {
+  constructor (filmInfo = {}, fetchComment) {
     super();
     this._data = PopupView.parseFilmToData(filmInfo);
+    this._fetchComment = fetchComment;
 
+    this._loadingComponent = new LoadingView();
     this._closeClickHandler = this._closeClickHandler.bind(this);
     this._emojiClickHandler = this._emojiClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
@@ -101,6 +105,8 @@ export default class PopupView extends SmartView {
     delete data.newComment;
     delete data.selectedEmotion;
     delete data.commentText;
+    delete data.fetchedComments;
+    delete data.isFaild;
 
     return data;
   }
@@ -112,6 +118,8 @@ export default class PopupView extends SmartView {
       {
         commentsCount: film.comments.length,
         newComment: {},
+        fetchedComments: null,
+        isFaild: false,
       },
     );
   }
@@ -130,6 +138,12 @@ export default class PopupView extends SmartView {
     this._setInnerHandlers();
   }
 
+  _handleCommentsRender(fetchComments) {
+    const comments = fetchComments();
+
+    this.updateData({comments}, true);
+  }
+
   _setInnerHandlers() {
     this._emojiListElement = this.getElement().querySelector('.film-details__emoji-list');
     this._emojiListElement.addEventListener('change', this._emojiClickHandler);
@@ -137,6 +151,15 @@ export default class PopupView extends SmartView {
     this.getElement().querySelector('#watched').addEventListener('click', this._watchedClickHandler);
     this.getElement().querySelector('#watchlist').addEventListener('click', this._watchlistClickHandler);
     this.getElement().querySelector('.film-details__comment-input').addEventListener('input', this._textInputHandler);
+
+    if (this._data.fetchedComments === null) {
+      this._fetchComment()
+        .then((comments) => {
+          this._data.fetchedComments = comments;
+          this.updateData({comments}, true);
+        })
+        .catch(() => this.updateData({isFaild: true}, true));
+    }
   }
 
   _emojiClickHandler(evt) {
@@ -263,8 +286,12 @@ export default class PopupView extends SmartView {
     this._element.querySelector('.film-details__close-btn').addEventListener('click', this._closeClickHandler);
   }
 
+  _createLoadingTemplate() {
+    return this._loadingComponent.getTemplate();
+  }
+
   getTemplate() {
-    const {title, originalTitle, genres, director, writers, actors, country, poster, description, comments, rating, ageRating, date, duration, commentsCount, inFavorites, inHistory, inWatchlist} = this._data;
+    const {title, originalTitle, genres, director, writers, actors, country, poster, description, rating, ageRating, date, duration, comments, commentsCount, inFavorites, inHistory, inWatchlist} = this._data;
 
     const detailsItems = [
       ['Director', director],
@@ -316,11 +343,11 @@ export default class PopupView extends SmartView {
             ${createTypesTemplate(buttonType, {inFavorites, inHistory, inWatchlist})}
           </div>
 
-          <div class="film-details__bottom-container">
+          ${!this._data.isFaild ? `<div class="film-details__bottom-container">
             <section class="film-details__comments-wrap">
-              <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
+              <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._data.fetchedComments ?commentsCount : 'Loading...'}</span></h3>
 
-              ${createCommentsTemplate(comments, this._data.commentsCount)}
+              ${this._data.fetchedComments ? createCommentsTemplate(comments, commentsCount) : this._createLoadingTemplate()}
 
               <div class="film-details__new-comment">
                 <div class="film-details__add-emoji-label">${createEmojiImgTemplate(this._data.selectedEmotion)}</div>
@@ -334,7 +361,7 @@ export default class PopupView extends SmartView {
                 </div>
               </div>
             </section>
-          </div>
+          </div>` : ''}
         </form>
       </section>`
     );

@@ -16,7 +16,7 @@ export default class FilmPresenter {
 
   _handlePopup() {
     this._popupComponent.init(this._filmData);
-    this._popupComponent._renderPopup();
+    this._popupComponent.renderPopup();
   }
 
   init(filmData) {
