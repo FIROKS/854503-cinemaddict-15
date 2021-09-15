@@ -154,9 +154,9 @@ export default class PopupView extends SmartView {
 
     if (this._data.fetchedComments === null) {
       this._fetchComment()
-        .then((comments) => {
-          this._data.fetchedComments = comments;
-          this.updateData({comments}, true);
+        .then((fetchedComments) => {
+          this._data.fetchedComments = fetchedComments;
+          this.updateData({fetchedComments}, true);
         })
         .catch(() => this.updateData({isFaild: true}, true));
     }
@@ -291,7 +291,7 @@ export default class PopupView extends SmartView {
   }
 
   getTemplate() {
-    const {title, originalTitle, genres, director, writers, actors, country, poster, description, rating, ageRating, date, duration, comments, commentsCount, inFavorites, inHistory, inWatchlist} = this._data;
+    const {title, originalTitle, genres, director, writers, actors, country, poster, description, rating, ageRating, date, duration, fetchedComments, commentsCount, inFavorites, inHistory, inWatchlist} = this._data;
 
     const detailsItems = [
       ['Director', director],
@@ -347,7 +347,7 @@ export default class PopupView extends SmartView {
             <section class="film-details__comments-wrap">
               <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._data.fetchedComments ?commentsCount : 'Loading...'}</span></h3>
 
-              ${this._data.fetchedComments ? createCommentsTemplate(comments, commentsCount) : this._createLoadingTemplate()}
+              ${this._data.fetchedComments ? createCommentsTemplate(fetchedComments, commentsCount) : this._createLoadingTemplate()}
 
               <div class="film-details__new-comment">
                 <div class="film-details__add-emoji-label">${createEmojiImgTemplate(this._data.selectedEmotion)}</div>

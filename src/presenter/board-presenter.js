@@ -62,7 +62,7 @@ export default class BoardPresenter {
 
   init() {
     this._renderInterface();
-    this._renderBord();
+    this._renderBoard();
   }
 
   _renderStats() {
@@ -78,7 +78,7 @@ export default class BoardPresenter {
     this._sortComponent.getElement().remove();
   }
 
-  _renderBord() {
+  _renderBoard() {
     if (this._isLoading) {
       this._mainListComponent.init();
       this._renderLoading();
@@ -119,18 +119,18 @@ export default class BoardPresenter {
   _handleViewAction(userAction, updateType, update) {
     switch (userAction) {
       case ActionTypes.ADD_COMMENT: {
-        this._filmModel.updatefilm(updateType, update);
-        // this._filmModel.addComment(updateType, )
+        this._api.addComment(update)
+          .then(() => this._filmModel.updatefilm(updateType, update));
         break;
       }
       case ActionTypes.DELETE_COMMENT: {
-        this._filmModel.deleteComment(updateType, update);
-        // this._filmModel.deleteComment(updateType, )
+        this._api.deleteComment(update)
+          .then (() => this._filmModel.deleteComment(updateType, update));
         break;
       }
       case ActionTypes.UPDATE_FILM: {
-        this._filmModel.updatefilm(updateType, update);
-        // this._filmModel.updatefilm(updateType, update);
+        this._api.updateFilm(update)
+          .then(() => this._filmModel.updatefilm(updateType, update));
         break;
       }
     }
@@ -142,7 +142,7 @@ export default class BoardPresenter {
         this._clearBoard();
         // обновить фильтры
         this._renderInterface();
-        this._renderBord();
+        this._renderBoard();
         // обновить попап
         if (this._popupComponent.mode === Mode.DETAILS) {
           this._popupComponent.init(update);
@@ -172,7 +172,7 @@ export default class BoardPresenter {
         this._clearBoard(true, true);
         // обновить фильтры
         this._renderInterface();
-        this._renderBord();
+        this._renderBoard();
         // обновить попап
         if (this._popupComponent.mode === Mode.DETAILS) {
           this._popupComponent.renderPopup();
@@ -181,7 +181,7 @@ export default class BoardPresenter {
       }
       case UpdateType.INIT: {
         this._isLoading = false;
-        this._renderBord();
+        this._renderBoard();
       }
     }
   }

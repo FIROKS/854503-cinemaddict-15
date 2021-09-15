@@ -3,6 +3,7 @@ import FilmModel from './model/film-model';
 const Method = {
   GET: 'GET',
   POST: 'POST',
+  PUT: 'PUT',
 };
 
 export default class Api {
@@ -25,12 +26,12 @@ export default class Api {
   updateFilm(film) {
     return this._load({
       url: `movies/${film.id}`,
-      method: Method.GET,
+      method: Method.PUT,
       body: JSON.stringify(FilmModel.adaptToServer(film)),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
       .then(Api.toJSON)
-      .then(FilmModel.adaptToClient(film));
+      .then(FilmModel.adaptToClient);
   }
 
   _load({

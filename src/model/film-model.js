@@ -83,7 +83,7 @@ export default class FilmModel extends Observer {
           runtime: film.duration,
           title: film.title,
           'total_rating': film.rating,
-          writers: film.rating,
+          writers: film.writers,
         },
         'user_details': {
           'already_watched': film.inHistory,
@@ -94,23 +94,23 @@ export default class FilmModel extends Observer {
       },
     );
 
-    delete(film.title);
-    delete(film.originalTitle);
-    delete(film.genres);
-    delete(film.director);
-    delete(film.writers);
-    delete(film.actors);
-    delete(film.country);
-    delete(film.poster);
-    delete(film.description);
-    delete(film.rating);
-    delete(film.ageRating);
-    delete(film.date);
-    delete(film.duration);
-    delete(film.inWatchlist);
-    delete(film.inHistory);
-    delete(film.inFavorites);
-    delete(film.watchingDate);
+    delete(adaptedFilm.title);
+    delete(adaptedFilm.originalTitle);
+    delete(adaptedFilm.genres);
+    delete(adaptedFilm.director);
+    delete(adaptedFilm.writers);
+    delete(adaptedFilm.actors);
+    delete(adaptedFilm.country);
+    delete(adaptedFilm.poster);
+    delete(adaptedFilm.description);
+    delete(adaptedFilm.rating);
+    delete(adaptedFilm.ageRating);
+    delete(adaptedFilm.date);
+    delete(adaptedFilm.duration);
+    delete(adaptedFilm.inWatchlist);
+    delete(adaptedFilm.inHistory);
+    delete(adaptedFilm.inFavorites);
+    delete(adaptedFilm.watchingDate);
 
     return adaptedFilm;
   }
