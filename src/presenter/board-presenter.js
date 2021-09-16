@@ -120,12 +120,14 @@ export default class BoardPresenter {
     switch (userAction) {
       case ActionTypes.ADD_COMMENT: {
         this._api.addComment(update)
-          .then(() => this._filmModel.updatefilm(updateType, update));
+          .then((response) => {
+            this._filmModel.addComment(updateType, response);
+          });
         break;
       }
       case ActionTypes.DELETE_COMMENT: {
-        this._api.deleteComment(update)
-          .then (() => this._filmModel.deleteComment(updateType, update));
+        this._api.deleteComment(update.commentId)
+          .then (() => this._filmModel.deleteComment(updateType, update.film));
         break;
       }
       case ActionTypes.UPDATE_FILM: {

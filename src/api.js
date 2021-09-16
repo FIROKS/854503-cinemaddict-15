@@ -4,6 +4,7 @@ const Method = {
   GET: 'GET',
   POST: 'POST',
   PUT: 'PUT',
+  DELETE: 'DELETE',
 };
 
 export default class Api {
@@ -50,12 +51,21 @@ export default class Api {
       .catch(Api.catchError);
   }
 
-  deleteComment() {
-
+  deleteComment(commentId) {
+    return this._load({
+      url: `comments/${commentId}`,
+      method: Method.DELETE,
+    });
   }
 
-  addComment() {
-
+  addComment([film, comment]) {
+    return this._load({
+      url: `comments/${film.id}`,
+      method: Method.POST,
+      body: JSON.stringify(comment),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(Api.toJSON);
   }
 
   static checkStatus(response) {
