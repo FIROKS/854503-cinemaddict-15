@@ -1,9 +1,23 @@
 import AbstractView from './abstract-view';
 import he from 'he';
+
+const createButtonTemplate = (id, isDeleting, deletedCommentId) => {
+  if (!isDeleting) {
+    return ('<button class="film-details__comment-delete">Delete</button>');
+  }
+
+  const isEqual = id === deletedCommentId;
+
+  return (`<button class="film-details__comment-delete" ${isEqual ? 'disabled' : ''}>${isEqual ? 'Deleting' : 'Delete'}</button>`);
+
+};
+
 export default class CommentView extends AbstractView {
-  constructor(commentInfo)  {
+  constructor(commentInfo, isDeleting, deletedCommentId)  {
     super();
     this._commentInfo = commentInfo;
+    this.isDeleting = isDeleting;
+    this.deletedCommentId = deletedCommentId;
   }
 
   getTemplate() {
@@ -19,7 +33,7 @@ export default class CommentView extends AbstractView {
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${author}</span>
             <span class="film-details__comment-day">${date}</span>
-            <button class="film-details__comment-delete">Delete</button>
+            ${createButtonTemplate(id, this.isDeleting, this.deletedCommentId)}
           </p>
         </div>
       </li>`

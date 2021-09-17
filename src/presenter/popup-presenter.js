@@ -3,6 +3,12 @@ import { Mode, RenderPosition } from '../const';
 import PopupView from '../view/popup-view';
 import { ActionTypes, UpdateType } from '../const';
 
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
+};
+
 const BODY_ELEMENT = document.body;
 
 export default class PopupPresenter {
@@ -16,7 +22,7 @@ export default class PopupPresenter {
     this._mode = Mode.DEFAULT;
     // this._scrollPosition = null;
 
-    this._handleCommentsFetch = this._handleCommentsFetch.bind(this);
+    // this._handleCommentsFetch = this._handleCommentsFetch.bind(this);
     this._handleCommentDeletion = this._handleCommentDeletion.bind(this);
   }
 
@@ -31,12 +37,48 @@ export default class PopupPresenter {
     return this._mode;
   }
 
-  _handleCommentsFetch() {
-    return new Promise((resolve) => {
-      const comments = this._api.getComments(this._filmData.id);
-      resolve(comments);
-    });
+  setViewState(state, commentId) {
+    if (this._mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const resetFormState = () => {
+      this._popupComponent.updateData(
+        PopupView.parseFilmToData(this._filmData),
+        {
+          // isDisabled: false,
+          isSaving: false,
+          isDeleting: false,
+          deletedCommentId: null,
+        }, true);
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._popupComponent.updateData({
+          // isDisabled: true,
+          isSaving: true,
+        }, true);
+        break;
+      case State.DELETING:
+        this._popupComponent.updateData({
+          // isDisabled: true,
+          isDeleting: true,
+          deletedCommentId: commentId,
+        }, true);
+        break;
+      case State.ABORTING:
+        this._popupComponent.shake(resetFormState);
+        break;
+    }
   }
+
+  // _handleCommentsFetch() {
+  //   return new Promise((resolve) => {
+  //     const comments = this._api.getComments(this._filmData.id);
+  //     resolve(comments);
+  //   });
+  // }
 
   _handleCommentDeletion(evt, filmData) {
     const commentId = evt.target.closest('.film-details__comment').dataset.id;
@@ -45,6 +87,8 @@ export default class PopupPresenter {
       filmData,
     );
     updatedFilmData.comments = updatedFilmData.comments.filter((comment) => comment !== commentId);
+
+    // this._popupComponent.updateData({deletedCommentId: commentId}, true);
 
     this._changeData(
       ActionTypes.DELETE_COMMENT,
@@ -57,33 +101,45 @@ export default class PopupPresenter {
 
   }
 
-  updateView() {
-    this._popupComponent.updateData(PopupView.parseFilmToData(this._filmData), true);
-  }
+  // updateView() {
+  //   this._popupComponent.updateData(PopupView.parseFilmToData(this._filmData), true);
+  // }
 
   renderPopup() {
-    const oldPopupComponent = this._popupComponent;
-    this._popupComponent = new PopupView(this._filmData, this._handleCommentsFetch);
+    BODY_ELEMENT.style.cursor = 'wait';
+    this._api.getComments(this._filmData.id)
+      .then((comments) => {
+        this._filmData = Object.assign(
+          {},
+          this._filmData,
+          {fetchedComments: comments},
+        );
 
-    if (oldPopupComponent === null) {
-      render(BODY_ELEMENT, this._popupComponent, RenderPosition.BEFOREEND);
-      BODY_ELEMENT.classList.add('hide-overflow');
-      document.addEventListener('keydown', this._onEscKeydown);
+        const oldPopupComponent = this._popupComponent;
+        this._popupComponent = new PopupView(this._filmData);
 
-    } else if (BODY_ELEMENT.contains(oldPopupComponent.getElement())) {
-      // this._scrollPosition = oldPopupComponent.getElement().scrollTop;
-      replace(oldPopupComponent, this._popupComponent);
-      // this._popupComponent.getElement().scrollTop = this._scrollPosition;
-      remove(oldPopupComponent);
-    }
+        if (oldPopupComponent === null) {
+          render(BODY_ELEMENT, this._popupComponent, RenderPosition.BEFOREEND);
+          BODY_ELEMENT.classList.add('hide-overflow');
+          document.addEventListener('keydown', this._onEscKeydown);
 
-    this._popupComponent.setCloseClickHandler(this._removePopup);
-    this._popupComponent.setFavoriteClickHandler(this._changeData);
-    this._popupComponent.setWatchedClickHandler(this._changeData);
-    this._popupComponent.setWatchlistClickHandler(this._changeData);
-    this._popupComponent.setCommentSubmitHandler(this._changeData);
-    this._popupComponent.setCommentDeleteHandler(this._handleCommentDeletion);
-    this._mode = Mode.DETAILS;
+        } else if (BODY_ELEMENT.contains(oldPopupComponent.getElement())) {
+        // this._scrollPosition = oldPopupComponent.getElement().scrollTop;
+          replace(oldPopupComponent, this._popupComponent);
+          // this._popupComponent.getElement().scrollTop = this._scrollPosition;
+          remove(oldPopupComponent);
+        }
+
+        this._popupComponent.setCloseClickHandler(this._removePopup);
+        this._popupComponent.setFavoriteClickHandler(this._changeData);
+        this._popupComponent.setWatchedClickHandler(this._changeData);
+        this._popupComponent.setWatchlistClickHandler(this._changeData);
+        this._popupComponent.setCommentSubmitHandler(this._changeData);
+        this._popupComponent.setCommentDeleteHandler(this._handleCommentDeletion);
+        this._mode = Mode.DETAILS;
+
+        BODY_ELEMENT.style.cursor = 'default';
+      });
   }
 
   _removePopup() {

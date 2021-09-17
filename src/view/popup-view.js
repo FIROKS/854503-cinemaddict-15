@@ -12,8 +12,8 @@ const buttonType = [
   ['favorite', 'Add to favorites', 'inFavorites'],
 ];
 
-const createEmojiTemplate = (emojiType, selectedEmotion) => (`
-  <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emojiType}" value="${emojiType}" ${emojiType === selectedEmotion ? 'checked' : ''}>
+const createEmojiTemplate = (emojiType, selectedEmotion, isSaving) => (`
+  <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emojiType}" value="${emojiType}" ${emojiType === selectedEmotion ? 'checked' : ''} ${isSaving ? 'disabled' : ''}>
   <label class="film-details__emoji-label" for="emoji-${emojiType}">
     <img src="./images/emoji/${emojiType}.png" width="30" height="30" alt="emoji">
   </label>
@@ -62,11 +62,11 @@ const createTypesTemplate = (types, filmData) => {
   `);
 };
 
-const createCommentsTemplate = (comments, commentsCount = 0) => {
+const createCommentsTemplate = (comments, commentsCount = 0, isDeleting, deletedCommentId) => {
   if (comments && commentsCount !== 0) {
     return (
       `<ul class="film-details__comments-list">
-        ${comments.map((comment) => new CommentView(comment).getTemplate()).join('')}
+        ${comments.map((comment) => new CommentView(comment, isDeleting, deletedCommentId).getTemplate()).join('')}
       </ul>`
     );
   }
@@ -84,7 +84,7 @@ export default class PopupView extends SmartView {
   constructor (filmInfo = {}, fetchComment) {
     super();
     this._data = PopupView.parseFilmToData(filmInfo);
-    this._fetchComment = fetchComment;
+    // this._fetchComment = fetchComment;
 
     this._loadingComponent = new LoadingView();
     this._closeClickHandler = this._closeClickHandler.bind(this);
@@ -109,6 +109,10 @@ export default class PopupView extends SmartView {
     delete data.commentText;
     delete data.fetchedComments;
     delete data.isFaild;
+    // delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
+    delete data.deletedCommentId;
 
     return data;
   }
@@ -120,8 +124,11 @@ export default class PopupView extends SmartView {
       {
         commentsCount: film.comments.length,
         newComment: {},
-        fetchedComments: null,
+        // fetchedComments,
         isFaild: false,
+        // isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
       },
     );
   }
@@ -164,15 +171,15 @@ export default class PopupView extends SmartView {
     this.getElement().querySelector('#watchlist').addEventListener('click', this._watchlistClickHandler);
     this.getElement().querySelector('.film-details__comment-input').addEventListener('input', this._textInputHandler);
 
-    if (this._data.fetchedComments === null) {
-      this._fetchComment()
-        .then((fetchedComments) => {
-          this._data.fetchedComments = fetchedComments;
-          this.updateData({fetchedComments}, true);
-          this.getElement().scrollTop = this._scrollPosition;
-        })
-        .catch(() => this.updateData({isFaild: true}, true));
-    }
+    // if (this._data.fetchedComments === null) {
+    //   this._fetchComment()
+    //     .then((fetchedComments) => {
+    //       this._data.fetchedComments = fetchedComments;
+    //       this.updateData({fetchedComments}, true);
+    //       this.getElement().scrollTop = this._scrollPosition;
+    //     })
+    //     .catch(() => this.updateData({isFaild: true}, true));
+    // }
   }
 
   _emojiClickHandler(evt) {
@@ -300,7 +307,7 @@ export default class PopupView extends SmartView {
   }
 
   getTemplate() {
-    const {title, originalTitle, genres, director, writers, actors, country, poster, description, rating, ageRating, date, duration, fetchedComments, commentsCount, inFavorites, inHistory, inWatchlist} = this._data;
+    const {title, originalTitle, genres, director, writers, actors, country, poster, description, rating, ageRating, date, duration, fetchedComments, commentsCount, inFavorites, inHistory, inWatchlist, isSaving, isDeleting, deletedCommentId} = this._data;
 
     const detailsItems = [
       ['Director', director],
@@ -313,7 +320,7 @@ export default class PopupView extends SmartView {
 
     return (
       `<section class="film-details">
-        <form class="film-details__inner" action="" method="get">
+        <form class="film-details__inner" action="" method="get" ${isSaving ? 'disabled' : ''}>
           <div class="film-details__top-container">
             <div class="film-details__close">
               <button class="film-details__close-btn" type="button">close</button>
@@ -352,25 +359,25 @@ export default class PopupView extends SmartView {
             ${createTypesTemplate(buttonType, {inFavorites, inHistory, inWatchlist})}
           </div>
 
-          ${!this._data.isFaild ? `<div class="film-details__bottom-container">
+          <div class="film-details__bottom-container">
             <section class="film-details__comments-wrap">
-              <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._data.fetchedComments ?commentsCount : 'Loading...'}</span></h3>
+              <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
 
-              ${this._data.fetchedComments ? createCommentsTemplate(fetchedComments, commentsCount) : this._createLoadingTemplate()}
+              ${createCommentsTemplate(fetchedComments, commentsCount, isDeleting, deletedCommentId)}
 
               <div class="film-details__new-comment">
                 <div class="film-details__add-emoji-label">${createEmojiImgTemplate(this._data.selectedEmotion)}</div>
 
                 <label class="film-details__comment-label">
-                  <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${this._data.commentText ? this._data.commentText : ''}</textarea>
+                  <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isSaving ? 'disabled' : ''}>${this._data.commentText ? this._data.commentText : ''}</textarea>
                 </label>
 
                 <div class="film-details__emoji-list">
-                  ${EMOTIONS.map((emotion) => createEmojiTemplate(emotion, this._data.selectedEmotion)).join('')}
+                  ${EMOTIONS.map((emotion) => createEmojiTemplate(emotion, this._data.selectedEmotion, isSaving)).join('')}
                 </div>
               </div>
             </section>
-          </div>` : ''}
+          </div>}
         </form>
       </section>`
     );
