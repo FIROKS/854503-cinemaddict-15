@@ -4,6 +4,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { filmsFromPeriod, genresCount, topGenre, totalDuration, watchedCount } from '../utils/stats';
 import { StatsFilters } from '../const';
 import { capitalizeFirstLetter } from '../utils/utils';
+import { getUserRank } from '../utils/utils';
 
 
 const renderStatsChart = (films, statisticCtx) => {
@@ -83,6 +84,7 @@ export default class StatsView extends SmartView {
     super();
     this._data = {
       films,
+      filteredFilms: films,
       currentStatsFilter: StatsFilters.ALL_TIME,
     };
 
@@ -106,55 +108,56 @@ export default class StatsView extends SmartView {
 
     this.updateData({
       currentStatsFilter: evt.target.value,
+      filteredFilms: filmsFromPeriod(this._data.films, new Date(), evt.target.value),
     }, true);
   }
 
   _setChart() {
     const statisticCtx = this.getElement().querySelector('.statistic__chart');
-    const filteredFilms = filmsFromPeriod(this._data.films, new Date(), this._data.currentStatsFilter);
 
-    this._chart = renderStatsChart(filteredFilms, statisticCtx);
+    this._chart = renderStatsChart(this._data.filteredFilms, statisticCtx);
+    this._duration = totalDuration(this._data.filteredFilms);
 
     this.getElement().querySelector('.statistic__filters').addEventListener('change', this._periodClickHandler);
   }
 
   getTemplate() {
-    const duration = totalDuration(this._data.films);
-    const watchedAmount = watchedCount(this._data.films);
+    const duration = totalDuration(this._data.filteredFilms);
+    const watchedAmount = watchedCount(this._data.filteredFilms);
 
     return (
       `<section class="statistic">
         <p class="statistic__rank">
           Your rank
           <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-          <span class="statistic__rank-label">Movie buff</span>
+          <span class="statistic__rank-label">${getUserRank(this._data.filteredFilms)}</span>
         </p>
-    
+
         <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
           <p class="statistic__filters-description">Show stats:</p>
-    
+
           ${createFiltersTemplate(this._data.currentStatsFilter)}
         </form>
-    
+
         <ul class="statistic__text-list">
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">You watched</h4>
-            <p class="statistic__item-text">${watchedAmount} <span class="statistic__item-description">${watchedAmount !== 1 ? 'movies' : 'movie'}</span></p>
+            <p class="statistic__item-text">${watchedAmount ? watchedAmount : '0'} <span class="statistic__item-description">${watchedAmount !== 1 ? 'movies' : 'movie'}</span></p>
           </li>
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">Total duration</h4>
-            <p class="statistic__item-text">${duration.hours} <span class="statistic__item-description">h</span> ${duration.minutes} <span class="statistic__item-description">m</span></p>
+            <p class="statistic__item-text">${duration.hours ? duration.hours : '0'} <span class="statistic__item-description">h</span> ${duration.minutes ? duration.minutes : '0'} <span class="statistic__item-description">m</span></p>
           </li>
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">Top genre</h4>
-            <p class="statistic__item-text">${topGenre(this._data.films)}</p>
+            <p class="statistic__item-text">${this._data.filteredFilms ? topGenre(this._data.filteredFilms) : ''}</p>
           </li>
         </ul>
-    
+
         <div class="statistic__chart-wrap">
           <canvas class="statistic__chart" width="1000"></canvas>
         </div>
-    
+
       </section>`
     );
   }

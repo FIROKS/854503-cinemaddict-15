@@ -23,12 +23,12 @@ export const genresCount = (films) => {
 };
 
 export const totalDuration = (films) => {
-  const resultHours = films.reduce((sum, film) => sum + dayjs(film.duration).hour(), 0);
-  const resultMinutes = films.reduce((sum, film) => sum + dayjs(film.duration).minute(), 0);
-
+  const result = films.reduce((sum, film) => sum + dayjs(film.duration), 0);
+  const hours = Math.floor(result / 60);
+  const minutes = Math.round(result - hours * 60);
   return {
-    hours: resultHours,
-    minutes: resultMinutes,
+    hours,
+    minutes,
   };
 };
 
@@ -49,7 +49,7 @@ export const filmsFromPeriod = (films, dateFrom, dateTo) => {
 
   switch (dateTo) {
     case StatsFilters.TODAY: {
-      return films.filter((film) => dayjs(film.watchingDate).isBefore(dateFrom));
+      return films.filter((film) => dayjs(film.watchingDate).isSame(dayjs(), 'day'));
     }
     case StatsFilters.ALL_TIME: {
       return films;

@@ -54,3 +54,19 @@ export const sortByDate = (filmA, filmB) => {
 };
 
 export const findIndex = (data, value, prop) => data.findIndex((item) => item[prop] === value);
+
+export const getUserRank = (films) => {
+  const filmsInHistory = films.filter((film) => film.inHistory === true).length;
+
+  if (filmsInHistory >= 1 && filmsInHistory <= 10) {
+    return 'Novice';
+  }
+  if (filmsInHistory >= 11 && filmsInHistory <= 20) {
+    return 'Fan';
+  }
+  if (filmsInHistory >= 21) {
+    return 'Movie Buff';
+  }
+
+  return '';
+};

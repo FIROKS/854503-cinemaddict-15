@@ -1,6 +1,7 @@
 import { render, remove, replace } from '../utils/render';
 import { RenderPosition, Mode } from '../const';
 import CardView from '../view/card-view';
+import { State } from '../const';
 
 export default class FilmPresenter {
   constructor(container, changeData, popupComponent) {
@@ -16,7 +17,7 @@ export default class FilmPresenter {
 
   _handlePopup() {
     this._popupComponent.init(this._filmData);
-    this._popupComponent.renderPopup();
+    this._popupComponent.openPopup();
   }
 
   init(filmData) {
@@ -43,6 +44,25 @@ export default class FilmPresenter {
     }
 
     remove(prevComponent);
+  }
+
+  setViewState(state) {
+    const resetFormState = () => {
+      this._filmComponent.updateData({
+        isDisabled: false,
+      }, true);
+    };
+
+    switch (state) {
+      case State.ABORTING: {
+        this._filmComponent.shake(resetFormState);
+        break;
+      }
+      case State.UPDATING: {
+        this._filmComponent.updateData({isDisabled: true}, true);
+        break;
+      }
+    }
   }
 
   destroy() {

@@ -3,7 +3,7 @@ import UserRankView from '../view/user-view';
 import SortView from '../view/sort-view';
 import FooterStatsView from '../view/footer-stats-view';
 import EmptyListView from '../view/empty-list-view';
-import PopupPresenter, {State as PopupPresenterViewState} from './popup-presenter';
+import PopupPresenter from './popup-presenter';
 import {createFilmMock} from '../mock/film-mock';
 import ExtraListPresenter from './extra-list-presenter';
 import MainListPresenter from './list-presenter';
@@ -16,6 +16,7 @@ import FilterModel from '../model/filter-model';
 import { filter } from '../utils/filter';
 import StatsView from '../view/stats-view';
 import LoadingView from '../view/loading-view';
+import { State as ViewState } from '../const';
 
 const mainElement = document.querySelector('.main');
 const headerElement = document.querySelector('.header');
@@ -27,7 +28,7 @@ export default class BoardPresenter {
     this._topRatedComponent = null;
     this._mostCommentedComponent = null;
     this._sortComponent = null;
-    this._userRankComponent = new UserRankView();
+    this._userRankComponent = null;
     this._menuComponent = new MenuView();
     this._footerStatsComponent = new FooterStatsView();
     this._filmModel = filmModel;
@@ -119,34 +120,36 @@ export default class BoardPresenter {
   _handleViewAction(userAction, updateType, update) {
     switch (userAction) {
       case ActionTypes.ADD_COMMENT: {
-        this._popupComponent.setViewState(PopupPresenterViewState.SAVING);
+        this._popupComponent.setViewState(ViewState.SAVING);
         this._api.addComment(update)
           .then((response) => {
             this._filmModel.addComment(updateType, response);
           })
           .catch(() => {
-            this._popupComponent.setViewState(PopupPresenterViewState.ABORTING);
+            this._popupComponent.setViewState(ViewState.ABORTING);
           });
         break;
       }
       case ActionTypes.DELETE_COMMENT: {
-        this._popupComponent.setViewState(PopupPresenterViewState.DELETING, update.commentId);
+        this._popupComponent.setViewState(ViewState.DELETING, update.commentId);
         this._api.deleteComment(update.commentId)
           .then (() => {
             this._filmModel.deleteComment(updateType, update.film);
           })
           .catch(() => {
-            this._popupComponent.setViewState(PopupPresenterViewState.ABORTING);
+            this._popupComponent.setViewState(ViewState.ABORTING);
           });
         break;
       }
       case ActionTypes.UPDATE_FILM: {
+        this._updateFilmViewState(update, ViewState.UPDATING);
         this._api.updateFilm(update)
           .then(() => {
             this._filmModel.updatefilm(updateType, update);
           })
           .catch(() => {
-            this._popupComponent.setViewState(PopupPresenterViewState.ABORTING);
+            this._updateFilmViewState(update, ViewState.ABORTING);
+            this._popupComponent.setViewState(ViewState.ABORTING);
           });
         break;
       }
@@ -163,7 +166,7 @@ export default class BoardPresenter {
         // обновить попап
         if (this._popupComponent.mode === Mode.DETAILS) {
           this._popupComponent.init(update);
-          this._popupComponent.renderPopup();
+          this._popupComponent.openPopup();
           // this._popupComponent.updateView();
         }
         break;
@@ -180,7 +183,7 @@ export default class BoardPresenter {
         if (this._popupComponent.mode === Mode.DETAILS) {
           // обновить попап
           this._popupComponent.init(update);
-          this._popupComponent.renderPopup();
+          this._popupComponent.openPopup();
           // this._popupComponent.updateView();
           this._sortMostCommentedFilms();
           this._mostCommentedComponent.init(this._mostCommentedFilms);
@@ -195,16 +198,26 @@ export default class BoardPresenter {
         this._renderBoard();
         // обновить попап
         if (this._popupComponent.mode === Mode.DETAILS) {
-          this._popupComponent.renderPopup();
+          this._popupComponent.openPopup();
           // this._popupComponent.updateView();
         }
         break;
       }
       case UpdateType.INIT: {
         this._isLoading = false;
+        this._clearBoard();
+        this._renderInterface();
         this._renderBoard();
       }
     }
+  }
+
+  _updateFilmViewState(update, state) {
+    this._mainListComponent.filmsPresenters.get(update.id).setViewState(state);
+
+    this._topRatedComponent.filmsPresenters.has(update.id) && this._topRatedComponent.filmsPresenters.get(update.id).setViewState(state);
+
+    this._mostCommentedComponent.filmsPresenters.has(update.id) && this._mostCommentedComponent.filmsPresenters.get(update.id).setViewState(state);
   }
 
   _handleSortChange(newSortType) {
@@ -251,6 +264,7 @@ export default class BoardPresenter {
   }
 
   _renderUser() {
+    this._userRankComponent = new UserRankView(this._filmModel.films);
     render(headerElement, this._userRankComponent, RenderPosition.BEFOREEND);
   }
 

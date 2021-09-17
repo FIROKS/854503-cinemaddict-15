@@ -1,6 +1,6 @@
 import { ActionTypes, UpdateType } from '../const';
 import { getDurationFormat, getYear } from '../utils/film';
-import AbstractView from './abstract-view';
+import SmartView from './smart-view';
 
 const buttonType = [
   ['add-to-watchlist', 'Add to watchlist', 'inWatchlist'],
@@ -17,9 +17,9 @@ const formatDescription = (text) => {
   return formatedText;
 };
 
-const createTypesTemplate = (types, filmData) => {
+const createTypesTemplate = (types, isDisabled, filmData) => {
   const createTypeTemplate = ([buttonClass, buttonText, buttonProp]) => (`
-  <button class="film-card__controls-item film-card__controls-item--${buttonClass} ${filmData[buttonProp] ? 'film-card__controls-item--active' : ''}" type="button">${buttonText}</button>
+  <button class="film-card__controls-item film-card__controls-item--${buttonClass} ${filmData[buttonProp] ? 'film-card__controls-item--active' : ''}" type="button" ${isDisabled ? 'disabled' : ''}>${buttonText}</button>
   `);
 
   return (`
@@ -29,7 +29,7 @@ const createTypesTemplate = (types, filmData) => {
   `);
 };
 
-export default class CardView extends AbstractView {
+export default class CardView extends SmartView {
   constructor(filmData) {
     super();
     this._filmData = filmData;
@@ -40,6 +40,23 @@ export default class CardView extends AbstractView {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
+  }
+
+  restoreHandlers() {
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
+    this.setWatchedClickHandler(this._callback.watchedClick);
+    this.setWatchlistClickHandler(this._callback.watchlistClick);
+    this.setTitleClickHandler(this._callback.titleClick);
+    this.setCommentClickHandler(this._callback.commentClick);
+    this.setPosterHandler(this._callback.posterClick);
+  }
+
+  static parseDataToFilm(data) {
+    data = Object.assign({}, data);
+
+    delete (data.isDisabled);
+
+    return data;
   }
 
   _titleClickHandler(evt) {
@@ -69,7 +86,7 @@ export default class CardView extends AbstractView {
       UpdateType.PATCH,
       Object.assign(
         {},
-        this._filmData,
+        CardView.parseDataToFilm(this._filmData),
         {
           inFavorites: !this._filmData.inFavorites,
         },
@@ -85,7 +102,7 @@ export default class CardView extends AbstractView {
       UpdateType.PATCH,
       Object.assign(
         {},
-        this._filmData,
+        CardView.parseDataToFilm(this._filmData),
         {
           inHistory: !this._filmData.inHistory,
         },
@@ -101,7 +118,7 @@ export default class CardView extends AbstractView {
       UpdateType.PATCH,
       Object.assign(
         {},
-        this._filmData,
+        CardView.parseDataToFilm(this._filmData),
         {
           inWatchlist: !this._filmData.inWatchlist,
         },
@@ -154,7 +171,7 @@ export default class CardView extends AbstractView {
         <img src="${poster}" alt="" class="film-card__poster">
         <p class="film-card__description">${formatDescription(description)}</p>
         <a class="film-card__comments">${comments.length} ${comments.length > 1 || comments.length === 0 ? 'comments' : 'comment'}</a>
-        ${createTypesTemplate(buttonType, {inHistory, inFavorites, inWatchlist})}
+        ${createTypesTemplate(buttonType, this._data.isDisabled, {inHistory, inFavorites, inWatchlist})}
       </article>`
     );
   }

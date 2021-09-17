@@ -56,3 +56,10 @@ export const StatsFilters = {
   MONTH: 'month',
   YEAR: 'year',
 };
+
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
+  UPDATING: 'UPDATING',
+};
