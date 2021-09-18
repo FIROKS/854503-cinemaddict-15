@@ -30,7 +30,7 @@ export default class BoardPresenter {
     this._sortComponent = null;
     this._userRankComponent = null;
     this._menuComponent = new MenuView();
-    this._footerStatsComponent = new FooterStatsView();
+    this._footerStatsComponent = null;
     this._filmModel = filmModel;
     this._filterModel = new FilterModel();
     this._loadingComponent = new LoadingView();
@@ -269,6 +269,7 @@ export default class BoardPresenter {
   }
 
   _renderFooterStats() {
+    this._footerStatsComponent = new FooterStatsView(this._filmModel.films.length);
     render(footerElement, this._footerStatsComponent, RenderPosition.BEFOREEND);
   }
 
