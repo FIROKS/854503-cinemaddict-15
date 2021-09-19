@@ -1,9 +1,7 @@
 import CommentView from './comment-view';
-import { EMOTIONS, UpdateType, ActionTypes, RenderPosition } from '../const';
+import { EMOTIONS, UpdateType, ActionTypes} from '../const';
 import { getDurationFormat, getFullDate } from '../utils/film';
 import SmartView from './smart-view';
-import dayjs from 'dayjs';
-import { render } from '../utils/render';
 import LoadingView from './loading-view';
 
 const buttonType = [
@@ -84,7 +82,6 @@ export default class PopupView extends SmartView {
   constructor (filmInfo = {}) {
     super();
     this._data = PopupView.parseFilmToData(filmInfo);
-    // this._fetchComment = fetchComment;
 
     this._loadingComponent = new LoadingView();
     this._closeClickHandler = this._closeClickHandler.bind(this);
@@ -108,7 +105,6 @@ export default class PopupView extends SmartView {
     delete data.selectedEmotion;
     delete data.commentText;
     delete data.isFaild;
-    // delete data.isDisabled;
     delete data.isSaving;
     delete data.isDeleting;
     delete data.deletedCommentId;
@@ -123,8 +119,6 @@ export default class PopupView extends SmartView {
       {
         commentsCount: film.comments.length,
         newComment: {},
-        // fetchedComments,
-        // isDisabled: false,
         isSaving: false,
         isDeleting: false,
       },

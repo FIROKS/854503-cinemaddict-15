@@ -15,9 +15,7 @@ export default class PopupPresenter {
     this._removePopup = this._removePopup.bind(this);
     this._onEscKeydown = this._onEscKeydown.bind(this);
     this._mode = Mode.DEFAULT;
-    // this._scrollPosition = null;
 
-    // this._handleCommentsFetch = this._handleCommentsFetch.bind(this);
     this._handleCommentDeletion = this._handleCommentDeletion.bind(this);
   }
 
@@ -41,7 +39,6 @@ export default class PopupPresenter {
       this._popupComponent.updateData(
         PopupView.parseFilmToData(this._filmData),
         {
-          // isDisabled: false,
           isSaving: false,
           isDeleting: false,
           deletedCommentId: null,
@@ -51,13 +48,11 @@ export default class PopupPresenter {
     switch (state) {
       case State.SAVING:
         this._popupComponent.updateData({
-          // isDisabled: true,
           isSaving: true,
         }, true);
         break;
       case State.DELETING:
         this._popupComponent.updateData({
-          // isDisabled: true,
           isDeleting: true,
           deletedCommentId: commentId,
         }, true);
@@ -68,13 +63,6 @@ export default class PopupPresenter {
     }
   }
 
-  // _handleCommentsFetch() {
-  //   return new Promise((resolve) => {
-  //     const comments = this._api.getComments(this._filmData.id);
-  //     resolve(comments);
-  //   });
-  // }
-
   _handleCommentDeletion(evt, filmData) {
     const commentId = evt.target.closest('.film-details__comment').dataset.id;
     const updatedFilmData = Object.assign(
@@ -82,8 +70,6 @@ export default class PopupPresenter {
       filmData,
     );
     updatedFilmData.comments = updatedFilmData.comments.filter((comment) => comment !== commentId);
-
-    // this._popupComponent.updateData({deletedCommentId: commentId}, true);
 
     this._changeData(
       ActionTypes.DELETE_COMMENT,
@@ -93,12 +79,8 @@ export default class PopupPresenter {
         commentId,
       },
     );
-
   }
 
-  // updateView() {
-  //   this._popupComponent.updateData(PopupView.parseFilmToData(this._filmData), true);
-  // }
   openPopup() {
     BODY_ELEMENT.style.cursor = 'wait';
     this._commentsModel.getComments(this._filmData.id)
@@ -130,9 +112,7 @@ export default class PopupPresenter {
       document.addEventListener('keydown', this._onEscKeydown);
 
     } else if (BODY_ELEMENT.contains(oldPopupComponent.getElement())) {
-      // this._scrollPosition = oldPopupComponent.getElement().scrollTop;
       replace(oldPopupComponent, this._popupComponent);
-      // this._popupComponent.getElement().scrollTop = this._scrollPosition;
       remove(oldPopupComponent);
     }
 
@@ -149,7 +129,6 @@ export default class PopupPresenter {
 
   _removePopup() {
     if (this._popupComponent) {
-      // this._popupComponent.reset(this._filmData);
       remove(this._popupComponent);
       this._popupComponent = null;
       this._mode = Mode.DEFAULT;

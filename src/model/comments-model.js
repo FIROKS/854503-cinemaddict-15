@@ -13,8 +13,6 @@ export default class CommentsModel extends Observer {
       return Promise.resolve(this._comments[filmId]);
     } else {
       return new Promise((resolve) => {
-        // this._comments[filmId] = this._api.getComments(filmId);
-        // resolve(this._comments[filmId]);
         this._api.getComments(filmId)
           .then((comments) => {
             this._comments[filmId] = comments;

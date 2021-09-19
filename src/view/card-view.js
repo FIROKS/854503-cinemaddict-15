@@ -77,7 +77,6 @@ export default class CardView extends SmartView {
     this._callback.posterClick();
   }
 
-  // вынести в презентер ??
   _favoriteClickHandler(evt) {
     evt.preventDefault();
 

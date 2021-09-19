@@ -4,13 +4,11 @@ import SortView from '../view/sort-view';
 import FooterStatsView from '../view/footer-stats-view';
 import EmptyListView from '../view/empty-list-view';
 import PopupPresenter from './popup-presenter';
-import {createFilmMock} from '../mock/film-mock';
 import ExtraListPresenter from './extra-list-presenter';
 import MainListPresenter from './list-presenter';
 import { sortByCommentsAmount, sortByRating, sortByDate } from '../utils/utils';
 import { RenderPosition, Mode, SortTypes, ActionTypes, UpdateType } from '../const';
 import { render, remove } from '../utils/render';
-import FilmModel from '../model/film-model';
 import FilterPresenter from './filter-presenter';
 import FilterModel from '../model/filter-model';
 import { filter } from '../utils/filter';
@@ -40,15 +38,12 @@ export default class BoardPresenter {
     this._isLoading = true;
     this._commentsModel = new CommentsModel(this._api);
 
-    // this._sourcedFilmMocks = films;
-    // this._filmModel.films = this._sourcedFilmMocks;
     this._topRatedFilms = null;
     this._mostCommentedFilms = null;
     this._currentSortType = SortTypes.DEFAULT;
 
     this._filmsContainerElement = document.querySelector('.films');
 
-    // this._handleFilmChange = this._handleFilmChange.bind(this);
     this._handleSortChange = this._handleSortChange.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -61,7 +56,7 @@ export default class BoardPresenter {
 
     this._filmModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
-		this._commentsModel.addObserver(this._handleModelEvent); //TODO:
+    this._commentsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -127,11 +122,9 @@ export default class BoardPresenter {
         this._api.addComment(update)
           .then((response) => {
             this._commentsModel.addComment(updateType, response);
-            console.log(this._commentsModel._comments);
           })
-          .catch((response) => {
+          .catch(() => {
             this._popupComponent.setViewState(ViewState.ABORTING);
-            throw new Error(response);
           });
         break;
       }
@@ -139,9 +132,9 @@ export default class BoardPresenter {
         this._popupComponent.setViewState(ViewState.DELETING, update.commentId);
         this._api.deleteComment(update.commentId)
           .then (() => {
-            this._commentsModel.deleteComment(updateType, );
+            this._commentsModel.deleteComment(updateType, update);
           })
-          .catch((response) => {
+          .catch(() => {
             this._popupComponent.setViewState(ViewState.ABORTING);
           });
         break;
@@ -165,46 +158,39 @@ export default class BoardPresenter {
     switch (updateType) {
       case UpdateType.PATCH: {
         this._clearBoard();
-        // обновить фильтры
         this._renderInterface();
         this._renderBoard();
-        // обновить попап
+
         if (this._popupComponent.mode === Mode.DETAILS) {
           this._popupComponent.init(update);
           this._popupComponent.openPopup();
-          // this._popupComponent.updateView();
         }
         break;
       }
 
       case UpdateType.MINOR: {
-        // обновить карточку
         this._mainListComponent.filmsPresenters.get(update.id).init(update);
-        // обновить карточку в экста
+
         this._topRatedComponent.filmsPresenters.has(update.id) && this._topRatedComponent.filmsPresenters.get(update.id).init(update);
 
         this._mostCommentedComponent.filmsPresenters.has(update.id) && this._mostCommentedComponent.filmsPresenters.get(update.id).init(update);
 
         if (this._popupComponent.mode === Mode.DETAILS) {
-          // обновить попап
+
           this._popupComponent.init(update);
           this._popupComponent.openPopup();
-          // this._popupComponent.updateView();
+
           this._sortMostCommentedFilms();
           this._mostCommentedComponent.init(this._mostCommentedFilms);
         }
         break;
       }
-      // Только при изменении фильтров
       case UpdateType.MAJOR: {
         this._clearBoard(true, true);
-        // обновить фильтры
         this._renderInterface();
         this._renderBoard();
-        // обновить попап
         if (this._popupComponent.mode === Mode.DETAILS) {
           this._popupComponent.openPopup();
-          // this._popupComponent.updateView();
         }
         break;
       }

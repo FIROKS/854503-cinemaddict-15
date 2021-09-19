@@ -11,8 +11,6 @@ export default class MenuView extends AbstractView {
     evt.preventDefault();
 
     this._callback.statsClick();
-    // this.getElement().querySelector('.main-navigation__item--active').classList.toggle('main-navigation__item--active');
-    // main-navigation__item--active
   }
 
   setStatsClickHandler(callback) {

@@ -53,7 +53,6 @@ export default class FilmModel extends Observer {
       {},
       film,
       {
-        //TODO:
         comments: CommentsModel.adaptToServer(film.comments),
       },
       {

@@ -9,7 +9,7 @@ import { getUserRank } from '../utils/utils';
 
 const renderStatsChart = (films, statisticCtx) => {
   const BAR_HEIGHT = 50;
-  // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
+
   statisticCtx.height = BAR_HEIGHT * 5;
 
   return new Chart(statisticCtx, {
