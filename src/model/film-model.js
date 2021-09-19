@@ -1,5 +1,6 @@
 import { UpdateType } from '../const';
 import Observer from '../utils/observer';
+import CommentsModel from './comments-model';
 
 export default class FilmModel extends Observer {
   constructor() {
@@ -51,6 +52,10 @@ export default class FilmModel extends Observer {
     const adaptedFilm = Object.assign(
       {},
       film,
+      {
+        //TODO:
+        comments: CommentsModel.adaptToServer(film.comments),
+      },
       {
         'film_info': {
           actors: film.actors,

@@ -7,10 +7,10 @@ import { State } from '../const';
 const BODY_ELEMENT = document.body;
 
 export default class PopupPresenter {
-  constructor(changeData, api) {
+  constructor(changeData, commentsModel) {
     this._popupComponent = null;
     this._changeData = changeData;
-    this._api = api;
+    this._commentsModel = commentsModel;
 
     this._removePopup = this._removePopup.bind(this);
     this._onEscKeydown = this._onEscKeydown.bind(this);
@@ -101,15 +101,14 @@ export default class PopupPresenter {
   // }
   openPopup() {
     BODY_ELEMENT.style.cursor = 'wait';
-    this._api.getComments(this._filmData.id)
+    this._commentsModel.getComments(this._filmData.id)
       .then((comments) => {
         this._filmData = Object.assign(
           {},
           this._filmData,
-          {fetchedComments: comments},
+          {comments},
         );
         this.renderPopup();
-
       })
       .catch(() => {
         this._filmData = Object.assign(

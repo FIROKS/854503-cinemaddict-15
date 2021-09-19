@@ -107,7 +107,6 @@ export default class PopupView extends SmartView {
     delete data.newComment;
     delete data.selectedEmotion;
     delete data.commentText;
-    delete data.fetchedComments;
     delete data.isFaild;
     // delete data.isDisabled;
     delete data.isSaving;
@@ -163,15 +162,6 @@ export default class PopupView extends SmartView {
       this._emojiListElement.addEventListener('change', this._emojiClickHandler);
       this.getElement().querySelector('.film-details__comment-input').addEventListener('input', this._textInputHandler);
     }
-    // if (this._data.fetchedComments === null) {
-    //   this._fetchComment()
-    //     .then((fetchedComments) => {
-    //       this._data.fetchedComments = fetchedComments;
-    //       this.updateData({fetchedComments}, true);
-    //       this.getElement().scrollTop = this._scrollPosition;
-    //     })
-    //     .catch(() => this.updateData({isFaild: true}, true));
-    // }
   }
 
   _emojiClickHandler(evt) {
@@ -305,7 +295,7 @@ export default class PopupView extends SmartView {
   }
 
   getTemplate() {
-    const {title, originalTitle, genres, director, writers, actors, country, poster, description, rating, ageRating, date, duration, fetchedComments, commentsCount, inFavorites, inHistory, inWatchlist, isSaving, isDeleting, deletedCommentId} = this._data;
+    const {title, originalTitle, genres, director, writers, actors, country, poster, description, rating, ageRating, date, duration, comments, commentsCount, inFavorites, inHistory, inWatchlist, isSaving, isDeleting, deletedCommentId} = this._data;
 
     const detailsItems = [
       ['Director', director],
@@ -361,7 +351,7 @@ export default class PopupView extends SmartView {
             <section class="film-details__comments-wrap">
               <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
 
-              ${createCommentsTemplate(fetchedComments, commentsCount, isDeleting, deletedCommentId)}
+              ${createCommentsTemplate(comments, commentsCount, isDeleting, deletedCommentId)}
 
               <div class="film-details__new-comment">
                 <div class="film-details__add-emoji-label">${createEmojiImgTemplate(this._data.selectedEmotion)}</div>

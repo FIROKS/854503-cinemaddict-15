@@ -17,6 +17,7 @@ import { filter } from '../utils/filter';
 import StatsView from '../view/stats-view';
 import LoadingView from '../view/loading-view';
 import { State as ViewState } from '../const';
+import CommentsModel from '../model/comments-model';
 
 const mainElement = document.querySelector('.main');
 const headerElement = document.querySelector('.header');
@@ -37,6 +38,7 @@ export default class BoardPresenter {
     this._statsComponent = null;
     this._api = api;
     this._isLoading = true;
+    this._commentsModel = new CommentsModel(this._api);
 
     // this._sourcedFilmMocks = films;
     // this._filmModel.films = this._sourcedFilmMocks;
@@ -52,13 +54,14 @@ export default class BoardPresenter {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleStatsClick = this._handleStatsClick.bind(this);
 
-    this._popupComponent = new PopupPresenter(this._handleViewAction, this._api);
+    this._popupComponent = new PopupPresenter(this._handleViewAction, this._commentsModel);
     this._mainListComponent = new MainListPresenter(this._filmsContainerElement, this._handleViewAction, this._popupComponent);
     this._topRatedComponent = new ExtraListPresenter(this._filmsContainerElement, this._handleViewAction, this._popupComponent, 'Top rated');
     this._mostCommentedComponent = new ExtraListPresenter(this._filmsContainerElement, this._handleViewAction, this._popupComponent, 'Most commented');
 
     this._filmModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
+		this._commentsModel.addObserver(this._handleModelEvent); //TODO:
   }
 
   init() {
@@ -123,10 +126,12 @@ export default class BoardPresenter {
         this._popupComponent.setViewState(ViewState.SAVING);
         this._api.addComment(update)
           .then((response) => {
-            this._filmModel.addComment(updateType, response);
+            this._commentsModel.addComment(updateType, response);
+            console.log(this._commentsModel._comments);
           })
-          .catch(() => {
+          .catch((response) => {
             this._popupComponent.setViewState(ViewState.ABORTING);
+            throw new Error(response);
           });
         break;
       }
@@ -134,9 +139,9 @@ export default class BoardPresenter {
         this._popupComponent.setViewState(ViewState.DELETING, update.commentId);
         this._api.deleteComment(update.commentId)
           .then (() => {
-            this._filmModel.deleteComment(updateType, update.film);
+            this._commentsModel.deleteComment(updateType, );
           })
-          .catch(() => {
+          .catch((response) => {
             this._popupComponent.setViewState(ViewState.ABORTING);
           });
         break;
@@ -171,7 +176,7 @@ export default class BoardPresenter {
         }
         break;
       }
-      // Изменение комментариев
+
       case UpdateType.MINOR: {
         // обновить карточку
         this._mainListComponent.filmsPresenters.get(update.id).init(update);
