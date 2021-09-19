@@ -131,8 +131,8 @@ export default class BoardPresenter {
       case ActionTypes.DELETE_COMMENT: {
         this._popupComponent.setViewState(ViewState.DELETING, update.commentId);
         this._api.deleteComment(update.commentId)
-          .then (() => {
-            this._commentsModel.deleteComment(updateType, update);
+          .then(() => {
+            this._commentsModel.deleteComment(updateType, update, this._filmModel);
           })
           .catch(() => {
             this._popupComponent.setViewState(ViewState.ABORTING);

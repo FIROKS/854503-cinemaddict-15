@@ -88,7 +88,7 @@ export default class PopupPresenter {
         this._filmData = Object.assign(
           {},
           this._filmData,
-          {comments},
+          {fetchedComments: comments},
         );
         this.renderPopup();
       })

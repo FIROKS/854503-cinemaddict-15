@@ -1,4 +1,5 @@
 import Observer from '../utils/observer';
+import FilmModel from './film-model';
 
 export default class CommentsModel extends Observer {
   constructor(api) {
@@ -22,28 +23,24 @@ export default class CommentsModel extends Observer {
     }
   }
 
-  setComments(filmdId, comments) {
-    this._comments[filmdId] = comments;
-  }
-
   addComment(updateType, {movie: film, comments}) {
     const filmId = film.id;
     this._comments[filmId] = comments;
 
-    this._notify(updateType, film);
+    this._notify(updateType, FilmModel.adaptToClient(film));
   }
 
-  deleteComment(updateType, [film, commentId]) {
+  deleteComment(updateType, {film, commentId}) {
     const filmId = film.id;
     const filteredComments = this._comments[filmId].filter((comment) => comment.id !== commentId);
 
-    this._comments.filmId = filteredComments;
+    this._comments[filmId] = filteredComments;
+    film = Object.assign(
+      {},
+      film,
+      {fetchedComments: filteredComments},
+    );
 
-    this._notify(updateType, filteredComments);
-  }
-
-  static adaptToServer(comments) {
-    const adaptedComments = comments.map((comment) => comment = comment.id);
-    return adaptedComments;
+    this._notify(updateType, film);
   }
 }

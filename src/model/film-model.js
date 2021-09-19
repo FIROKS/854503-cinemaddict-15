@@ -1,6 +1,5 @@
 import { UpdateType } from '../const';
 import Observer from '../utils/observer';
-import CommentsModel from './comments-model';
 
 export default class FilmModel extends Observer {
   constructor() {
@@ -53,9 +52,6 @@ export default class FilmModel extends Observer {
       {},
       film,
       {
-        comments: CommentsModel.adaptToServer(film.comments),
-      },
-      {
         'film_info': {
           actors: film.actors,
           'age_rating': film.ageRating,
@@ -99,6 +95,7 @@ export default class FilmModel extends Observer {
     delete(adaptedFilm.inHistory);
     delete(adaptedFilm.inFavorites);
     delete(adaptedFilm.watchingDate);
+    delete(adaptedFilm.fetchedComments);
 
     return adaptedFilm;
   }
