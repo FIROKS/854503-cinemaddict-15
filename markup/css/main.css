@@ -794,6 +794,9 @@ button {
   border: dashed 1px #979797;
   background-color: rgba(255, 255, 255, 0.1);
   margin-right: 14px;
+  background-position: center;
+  background-size: 55px;
+  background-repeat: no-repeat;
 }
 .film-details__emoji-label {
   width: 40px;

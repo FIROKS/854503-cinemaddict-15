@@ -1,9 +1,20 @@
-export const createExtraTemplate = (title) => (`
-  <section class="films-list films-list--extra">
-    <h2 class="films-list__title">${title}</h2>
+import AbstractView from './abstract-view';
 
-    <div class="films-list__container">
+export default class ExtraView extends AbstractView {
+  constructor(title) {
+    super();
+    this._title = title;
+  }
 
-    </div>
-  </section>
-`);
+  getTemplate() {
+    return (
+      `<section class="films-list films-list--extra">
+        <h2 class="films-list__title">${this._title}</h2>
+
+        <div class="films-list__container">
+
+        </div>
+      </section>`
+    );
+  }
+}
