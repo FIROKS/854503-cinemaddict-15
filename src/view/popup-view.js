@@ -289,7 +289,7 @@ export default class PopupView extends SmartView {
   }
 
   getTemplate() {
-    const {title, originalTitle, genres, director, writers, actors, country, poster, description, rating, ageRating, date, duration, comments, commentsCount, inFavorites, inHistory, inWatchlist, isSaving, isDeleting, deletedCommentId} = this._data;
+    const {title, originalTitle, genres, director, writers, actors, country, poster, description, rating, ageRating, date, duration, fetchedComments, commentsCount, inFavorites, inHistory, inWatchlist, isSaving, isDeleting, deletedCommentId} = this._data;
 
     const detailsItems = [
       ['Director', director],
@@ -345,7 +345,7 @@ export default class PopupView extends SmartView {
             <section class="film-details__comments-wrap">
               <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
 
-              ${createCommentsTemplate(comments, commentsCount, isDeleting, deletedCommentId)}
+              ${createCommentsTemplate(fetchedComments, commentsCount, isDeleting, deletedCommentId)}
 
               <div class="film-details__new-comment">
                 <div class="film-details__add-emoji-label">${createEmojiImgTemplate(this._data.selectedEmotion)}</div>
