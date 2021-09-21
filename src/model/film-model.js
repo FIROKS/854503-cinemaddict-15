@@ -18,7 +18,7 @@ export default class FilmModel extends Observer {
     this._notify(UpdateType.INIT);
   }
 
-  updatefilm(updateType, update) {
+  updateFilm(updateType, update) {
     const index = this._films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {

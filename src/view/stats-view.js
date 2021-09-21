@@ -88,19 +88,11 @@ export default class StatsView extends SmartView {
       currentStatsFilter: StatsFilters.ALL_TIME,
     };
 
-    this._chart = null;
-
     this._periodClickHandler = this._periodClickHandler.bind(this);
   }
 
   restoreHandlers() {
     this._setChart();
-  }
-
-  removeElement() {
-    super.removeElement();
-
-    this._chart = null;
   }
 
   _periodClickHandler(evt) {
