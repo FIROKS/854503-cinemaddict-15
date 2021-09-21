@@ -143,7 +143,7 @@ export default class BoardPresenter {
         this._updateFilmViewState(update, ViewState.UPDATING);
         this._api.updateFilm(update)
           .then(() => {
-            this._filmModel.updatefilm(updateType, update);
+            this._filmModel.updateFilm(updateType, update);
           })
           .catch(() => {
             this._updateFilmViewState(update, ViewState.ABORTING);
